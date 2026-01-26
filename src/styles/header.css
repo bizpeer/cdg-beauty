@@ -16,8 +16,24 @@ header nav {
     height: 80px;
 }
 
+.logo a {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    color: var(--color-black);
+}
+
 .logo img {
     height: 40px;
+}
+
+.brand-name {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
 }
 
 .nav-links {
