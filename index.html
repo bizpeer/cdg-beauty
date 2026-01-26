@@ -51,8 +51,10 @@
           <a href="#collection" class="cta-btn" data-i18n="hero.cta">Discover Collection</a>
         </div>
         <div class="bento-item product-preview"
-          style="grid-column: span 4; grid-row: span 2; background: var(--color-gray);">
-          <img src="./assets/images/hero-product.svg" alt="Hero Product" fetchpriority="high" />
+          style="grid-column: span 4; grid-row: span 2; background: var(--color-black); overflow: hidden; padding: 0;">
+          <video class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
+            <source src="./assets/videos/hero-dance.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
     </section>
@@ -103,7 +105,7 @@
     <section id="media" class="section-padding container">
       <h2 style="margin-bottom: var(--spacing-sm);">Media Lab</h2>
       <div class="video-container">
-        <video id="brand-video" muted playsinline loop>
+        <video id="brand-video" class="autoplay-video" muted playsinline loop>
           <source src="./assets/videos/brand-video.mp4" type="video/mp4" />
         </video>
       </div>

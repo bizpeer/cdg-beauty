@@ -98,8 +98,9 @@ function setupScrollAnimations() {
 }
 
 function setupVideoAutoplay() {
-  const video = document.getElementById('brand-video');
-  if (video) {
+  const videos = document.querySelectorAll('.autoplay-video');
+
+  videos.forEach(video => {
     // Attempt play
     video.play().catch(() => {
       console.log('Autoplay blocked, waiting for interaction');
@@ -111,10 +112,10 @@ function setupVideoAutoplay() {
         if (entry.isIntersecting) video.play();
         else video.pause();
       });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
 
     videoObserver.observe(video);
-  }
+  });
 }
 
 // Global lang change listener
