@@ -124,18 +124,18 @@
         <div class="partner-grid">
           <div class="inquiry-form">
             <h3>Business Inquiry</h3>
-            <form id="contact-form" onsubmit="event.preventDefault(); alert('Inquiry Sent.');">
+            <form id="contact-form" onsubmit="handleInquiry(event)">
               <div class="form-group">
                 <label>Name</label>
-                <input type="text" required />
+                <input type="text" name="name" required />
               </div>
               <div class="form-group">
                 <label>Email</label>
-                <input type="email" required />
+                <input type="email" name="email" required />
               </div>
               <div class="form-group">
                 <label>Country</label>
-                <select>
+                <select name="country">
                   <option>Korea</option>
                   <option>Japan</option>
                   <option>USA</option>
@@ -145,10 +145,36 @@
               </div>
               <div class="form-group">
                 <label>Message</label>
-                <textarea rows="5"></textarea>
+                <textarea name="message" rows="5"></textarea>
               </div>
-              <button type="submit" class="submit-btn">SEND INQUIRY</button>
+              <button type="submit" class="submit-btn" id="inquiry-submit">SEND INQUIRY</button>
             </form>
+            <script>
+              async function handleInquiry(e) {
+                e.preventDefault();
+                const btn = document.getElementById('inquiry-submit');
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+
+                btn.disabled = true;
+                btn.innerText = 'SENDING...';
+
+                try {
+                  const res = await fetch('http://localhost:5000/api/inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                  });
+                  if (res.ok) alert('Inquiry sent successfully.');
+                  else alert('Failed to send inquiry.');
+                } catch (err) {
+                  alert('Error connecting to server.');
+                } finally {
+                  btn.disabled = false;
+                  btn.innerText = 'SEND INQUIRY';
+                }
+              }
+            </script>
           </div>
           <div class="faq-section">
             <h3>FAQ</h3>
