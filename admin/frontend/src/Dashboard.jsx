@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Users, Image, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { Users, Image, Settings, LogOut, ChevronRight, Mail } from 'lucide-react';
 import UserManagement from './UserManagement';
 import AssetManagement from './AssetManagement';
+import InquiryManagement from './InquiryManagement';
 import EmailConfig from './EmailConfig';
 
 const Dashboard = ({ user, onLogout }) => {
@@ -9,6 +10,7 @@ const Dashboard = ({ user, onLogout }) => {
 
     const menuItems = [
         { id: 'assets', label: 'Media Management', icon: <Image size={20} /> },
+        { id: 'inquiries', label: 'Inquiry Management', icon: <Mail size={20} /> },
         { id: 'users', label: 'Admin Management', icon: <Users size={20} />, roles: ['main'] },
         { id: 'email', label: 'Email Config', icon: <Settings size={20} />, roles: ['main'] },
     ];
@@ -30,8 +32,8 @@ const Dashboard = ({ user, onLogout }) => {
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
                             className={`w-full flex items-center justify-between px-4 py-3 text-sm font-semibold transition-all ${activeTab === item.id
-                                    ? 'bg-white text-black'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-900'
+                                ? 'bg-white text-black'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-900'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
@@ -75,6 +77,7 @@ const Dashboard = ({ user, onLogout }) => {
                     <div className="max-w-6xl mx-auto">
                         {activeTab === 'users' && <UserManagement />}
                         {activeTab === 'assets' && <AssetManagement />}
+                        {activeTab === 'inquiries' && <InquiryManagement />}
                         {activeTab === 'email' && <EmailConfig />}
                     </div>
                 </main>
