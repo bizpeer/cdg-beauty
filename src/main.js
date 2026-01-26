@@ -30,7 +30,7 @@ function renderProducts() {
         <div class="product-info">
           <h3>${p.name}</h3>
           <p>${p.tagline}</p>
-          <button class="inquiry-btn" data-i18n="products.inquiry">Inquiry</button>
+          <a href="#partner" class="inquiry-btn" data-i18n="products.inquiry">Inquiry</a>
         </div>
       </div>
     `).join('');
@@ -46,7 +46,7 @@ function renderProducts() {
         <div class="product-info">
           <h3 style="color: ${p.color}">${p.name}</h3>
           <p>${p.tagline}</p>
-          <button class="inquiry-btn" data-i18n="products.inquiry">Inquiry</button>
+          <a href="#partner" class="inquiry-btn" data-i18n="products.inquiry">Inquiry</a>
         </div>
       </div>
     `).join('');
