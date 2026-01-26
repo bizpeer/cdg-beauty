@@ -5,16 +5,16 @@
   --color-black: #000000;
   --color-red: #E60012;
   --color-gray: #f5f5f5;
-  
+
   --font-main: 'Inter', sans-serif;
   --font-heading: 'Outfit', sans-serif;
-  
+
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 2rem;
   --spacing-lg: 4rem;
   --spacing-xl: 8rem;
-  
+
   --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -32,7 +32,11 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .font-heading {
+h1,
+h2,
+h3,
+h4,
+.font-heading {
   font-family: var(--font-heading);
   text-transform: uppercase;
   letter-spacing: -0.02em;
@@ -58,6 +62,12 @@ button {
   padding: 0 var(--spacing-md);
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
 .flex-center {
   display: flex;
   justify-content: center;
@@ -68,12 +78,26 @@ button {
   padding: var(--spacing-xl) 0;
 }
 
+@media (max-width: 768px) {
+  .section-padding {
+    padding: var(--spacing-lg) 0;
+  }
+}
+
 /* Bento Grid */
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-auto-rows: minmax(100px, auto);
   gap: var(--spacing-sm);
+}
+
+@media (max-width: 900px) {
+  .bento-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
 }
 
 /* Animations */
@@ -83,7 +107,9 @@ button {
 }
 
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .heart-pulsate {
@@ -91,9 +117,17 @@ button {
 }
 
 @keyframes pulsate {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Custom Scrollbar */

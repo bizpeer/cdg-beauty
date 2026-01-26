@@ -1,32 +1,11 @@
-#philosophy {
-    background: var(--color-black);
-    color: var(--color-white);
-    text-align: center;
-    overflow: hidden;
-    position: relative;
-}
-
-#philosophy h2 {
-    font-size: clamp(2.5rem, 8vw, 6rem);
-    margin-bottom: var(--spacing-md);
-    color: var(--color-red);
-}
-
-.philosophy-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.philosophy-content p {
-    font-size: 1.5rem;
-    font-weight: 300;
-    line-height: 1.4;
-    opacity: 0.8;
-}
-
-/* Collection */
 #collection {
     padding: var(--spacing-xl) 0;
+}
+
+@media (max-width: 768px) {
+    #collection {
+        padding: var(--spacing-lg) 0;
+    }
 }
 
 .collection-title {
@@ -41,11 +20,25 @@
     gap: var(--spacing-md);
 }
 
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: var(--spacing-sm);
+    }
+}
+
 .product-card {
     position: relative;
     border: 1px solid #f0f0f0;
     padding: var(--spacing-md);
     transition: var(--transition-smooth);
+    background: #fff;
+}
+
+@media (max-width: 600px) {
+    .product-card {
+        padding: var(--spacing-xs);
+    }
 }
 
 .product-card:hover {
@@ -57,6 +50,12 @@
     height: 300px;
     position: relative;
     margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 600px) {
+    .product-image-container {
+        height: 180px;
+    }
 }
 
 .product-image,
@@ -87,10 +86,22 @@
     margin-bottom: 0.5rem;
 }
 
+@media (max-width: 600px) {
+    .product-info h3 {
+        font-size: 0.9rem;
+    }
+}
+
 .product-info p {
     font-size: 0.9rem;
     color: #666;
     margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 600px) {
+    .product-info p {
+        font-size: 0.75rem;
+    }
 }
 
 .inquiry-btn {
@@ -121,10 +132,23 @@
     padding: var(--spacing-lg);
 }
 
+@media (max-width: 900px) {
+    .color-playground {
+        grid-template-columns: 1fr;
+        padding: var(--spacing-sm);
+    }
+}
+
 .model-view {
     position: relative;
     height: 500px;
     background: #fff;
+}
+
+@media (max-width: 600px) {
+    .model-view {
+        height: 350px;
+    }
 }
 
 .model-img {
@@ -154,6 +178,7 @@
     height: 40px;
     border-radius: 50%;
     margin-right: 15px;
+    margin-bottom: 10px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: transform 0.2s;
