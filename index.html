@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comme des Garçons PLAY Cosmetics | Wear Your Heart</title>
+  <meta name="description"
+    content="Simple lines, iconic emotions. The first cosmetic collection by CDG Play. Wear Your Heart on Your Face." />
+</head>
+
+<body>
+  <header id="main-header">
+    <nav class="container">
+      <div class="logo">
+        <a href="/"><img src="/assets/images/cdg-logo.svg" alt="CDG PLAY" class="heart-pulsate" /></a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#philosophy" data-i18n="nav.philosophy">Philosophy</a></li>
+        <li><a href="#collection" data-i18n="nav.collection">Collection</a></li>
+        <li><a href="#media" data-i18n="nav.media">Media Lab</a></li>
+        <li><a href="#partner" data-i18n="nav.partner">Partner</a></li>
+      </ul>
+      <div class="lang-selector">
+        <button onclick="changeLang('en')">Hello</button>
+        <button onclick="changeLang('ja')">こんにちは</button>
+        <button onclick="changeLang('zh')">你好</button>
+        <button onclick="changeLang('ko')">안녕</button>
+        <button onclick="changeLang('fr')">Bonjour</button>
+        <button onclick="changeLang('id')">Apa Kabar</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- Hero Section -->
+    <section id="hero" class="section-padding">
+      <div class="container bento-grid">
+        <div class="bento-item hero-visual" style="grid-column: span 8; grid-row: span 4;">
+          <div class="heart-animation-container">
+            <svg viewBox="0 0 100 100" class="main-heart">
+              <path
+                d="M50 85c-1.5 0-3-.5-4.2-1.5-12-9.6-22.3-19.5-28.5-27.4-6.4-8.2-9-15.3-7.6-21.2 1.9-8 8.4-14.1 16-15.2 6.4-1 12.8 1.6 17.5 6.8 2.8 3.1 4.5 6.7 5 7.1.5-.4 2.2-4 5-7.1 4.7-5.2 11.1-7.8 17.5-6.8 7.6 1.1 14.1 7.2 16 15.2 1.4 5.9-1.2 13-7.6 21.2-6.2 7.9-16.5 17.8-28.5 27.4-1.2 1-2.7 1.5-4.2 1.5z"
+                fill="#E60012" />
+            </svg>
+          </div>
+        </div>
+        <div class="bento-item hero-text" style="grid-column: span 4; grid-row: span 2;">
+          <h1 data-i18n="hero.headline">Wear Your Heart on Your Face.</h1>
+          <p data-i18n="hero.subtext">Simple lines, iconic emotions. The first cosmetic collection by CDG Play.</p>
+          <a href="#collection" class="cta-btn" data-i18n="hero.cta">Discover Collection</a>
+        </div>
+        <div class="bento-item product-preview"
+          style="grid-column: span 4; grid-row: span 2; background: var(--color-gray);">
+          <img src="/assets/images/hero-product.jpg" alt="Hero Product" fetchpriority="high" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="section-padding">
+      <div class="container">
+        <h2 data-i18n="philosophy.title">Play with Essentials.</h2>
+        <div class="philosophy-content">
+          <p data-i18n="philosophy.body"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section id="collection" class="section-padding container">
+      <div class="collection-title">
+        <h2 data-i18n="products.skin">Play Skin</h2>
+      </div>
+      <div id="skin-grid" class="product-grid">
+        <!-- Skin products injected by JS -->
+      </div>
+
+      <div class="collection-title" style="margin-top: 100px;">
+        <h2 data-i18n="products.color">Play Color</h2>
+      </div>
+      <div id="color-grid" class="product-grid">
+        <!-- Color products injected by JS -->
+      </div>
+
+      <!-- Interactive Color Playground -->
+      <div class="color-playground">
+        <div class="model-view">
+          <img src="/assets/images/model-face.jpg" alt="Model" class="model-img" />
+          <div id="color-overlay" class="color-overlay"></div>
+        </div>
+        <div class="controls">
+          <h3 data-i18n="products.color">Play Color</h3>
+          <p>Signature Red is not just a color. It's an attitude.</p>
+          <div id="color-swatches" style="margin-top: 20px;">
+            <!-- Swatches injected by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Media Lab Section -->
+    <section id="media" class="section-padding container">
+      <h2 style="margin-bottom: var(--spacing-sm);">Media Lab</h2>
+      <div class="video-container">
+        <video id="brand-video" muted playsinline loop>
+          <source src="https://drive.google.com/file/d/16NEsnBSA3NF_J4AoH6aJEaCCAXV-deq1/view?usp=sharing"
+            type="video/mp4" />
+          <!-- Note: Direct links to Google Drive video might need proxy or embedding, 
+                  but following user's requirement to use the link. -->
+        </video>
+      </div>
+      <div class="media-assets">
+        <a href="#" class="download-link">Download All Assets</a>
+      </div>
+    </section>
+
+    <!-- Global Partner Section -->
+    <section id="partner" class="section-padding">
+      <div class="container">
+        <h2 style="margin-bottom: var(--spacing-md);">Become a Player</h2>
+        <div class="partner-grid">
+          <div class="inquiry-form">
+            <h3>Business Inquiry</h3>
+            <form id="contact-form" onsubmit="event.preventDefault(); alert('Inquiry Sent.');">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" required />
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" required />
+              </div>
+              <div class="form-group">
+                <label>Country</label>
+                <select>
+                  <option>Korea</option>
+                  <option>Japan</option>
+                  <option>USA</option>
+                  <option>France</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea rows="5"></textarea>
+              </div>
+              <button type="submit" class="submit-btn">SEND INQUIRY</button>
+            </form>
+          </div>
+          <div class="faq-section">
+            <h3>FAQ</h3>
+            <div class="faq-item">
+              <h4>How can I become a distributor?</h4>
+              <p>Please fill out the form to our left. Our global team will review and contact you within 3 business
+                days.</p>
+            </div>
+            <div class="faq-item">
+              <h4>Is it available globally?</h4>
+              <p>We are currently expanding to Europe, Asia, and North America.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="section-padding" style="background: var(--color-black); color: #fff; text-align: center;">
+    <p data-i18n="footer.rights"></p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+  <script>
+    function changeLang(lang) {
+      window.i18nManager.setLanguage(lang);
+    }
+  </script>
+</body>
+
+</html>

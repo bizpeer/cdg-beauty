@@ -1,0 +1,110 @@
+{
+    "en": {
+        "nav": {
+            "home": "Home",
+            "philosophy": "Philosophy",
+            "collection": "Collection",
+            "media": "Media Lab",
+            "partner": "Global Partner"
+        },
+        "hero": {
+            "headline": "Wear Your Heart on Your Face.",
+            "subtext": "Simple lines, iconic emotions. The first cosmetic collection by CDG Play.",
+            "cta": "Discover Collection"
+        },
+        "philosophy": {
+            "title": "Play with Essentials.",
+            "body": "Like a white tee in fashion, skincare is the essential in beauty. CDG Play Cosmetics focuses on the essence of being."
+        },
+        "products": {
+            "skin": "Play Skin",
+            "color": "Play Color",
+            "inquiry": "Inquiry"
+        },
+        "footer": {
+            "rights": "© 2026 Comme des Garçons PLAY Cosmetics. All rights reserved."
+        }
+    },
+    "ko": {
+        "nav": {
+            "home": "홈",
+            "philosophy": "철학",
+            "collection": "컬렉션",
+            "media": "미디어 랩",
+            "partner": "글로벌 파트너"
+        },
+        "hero": {
+            "headline": "당신의 얼굴에 하트를 입으세요.",
+            "subtext": "단순한 라인, 상징적인 감정. CDG Play의 첫 번째 코스메틱 컬렉션.",
+            "cta": "컬렉션 보기"
+        },
+        "philosophy": {
+            "title": "본질과 함께 놀다.",
+            "body": "패션에 화이트 티셔츠가 있다면, 뷰티에는 스킨케어가 있습니다. 복잡함을 거부하고 본질에 집중합니다."
+        },
+        "products": {
+            "skin": "플레이 스킨",
+            "color": "플레이 컬러",
+            "inquiry": "문의하기"
+        },
+        "footer": {
+            "rights": "© 2026 Comme des Garçons PLAY Cosmetics. 모든 권리 보유."
+        }
+    },
+    "ja": {
+        "nav": {
+            "home": "ホーム",
+            "philosophy": "フィロソフィー",
+            "collection": "コレクション",
+            "media": "メディアラボ",
+            "partner": "グローバルパートナー"
+        },
+        "hero": {
+            "headline": "心をお肌に纏う。",
+            "subtext": "シンプルなライン、象徴的な感情。CDG Play 初のコスメコレクション。",
+            "cta": "コレクションを見る"
+        }
+    },
+    "zh": {
+        "nav": {
+            "home": "首页",
+            "philosophy": "品牌哲学",
+            "collection": "系列产品",
+            "media": "媒体中心",
+            "partner": "全球伙伴"
+        },
+        "hero": {
+            "headline": "在脸上穿上你的心。",
+            "subtext": "简洁的线条，标志性的情感。CDG Play 首个美妆系列。",
+            "cta": "探索系列"
+        }
+    },
+    "fr": {
+        "nav": {
+            "home": "Accueil",
+            "philosophy": "Philosophie",
+            "collection": "Collection",
+            "media": "Média Lab",
+            "partner": "Partenaire Global"
+        },
+        "hero": {
+            "headline": "Portez votre cœur sur votre visage.",
+            "subtext": "Lignes simples, émotions iconiques. La première collection cosmétique par CDG Play.",
+            "cta": "Découvrir la Collection"
+        }
+    },
+    "id": {
+        "nav": {
+            "home": "Beranda",
+            "philosophy": "Filosofi",
+            "collection": "Koleksi",
+            "media": "Lab Media",
+            "partner": "Mitra Global"
+        },
+        "hero": {
+            "headline": "Kenakan Hatimu di Wajahmu.",
+            "subtext": "Garis sederhana, emosi ikonik. Koleksi kosmetik pertama dari CDG Play.",
+            "cta": "Jelajahi Koleksi"
+        }
+    }
+}
