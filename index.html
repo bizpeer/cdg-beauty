@@ -149,8 +149,26 @@
               </div>
               <button type="submit" class="submit-btn" id="inquiry-submit">SEND INQUIRY</button>
             </form>
-            <script>
-              async function handleInquiry(e) {
+
+            <!-- Firebase SDK -->
+            <script type="module">
+              import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+              import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+              // TODO: Replace with your actual Firebase config from Google Cloud Console
+              const firebaseConfig = {
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+                projectId: "YOUR_PROJECT_ID",
+                storageBucket: "YOUR_PROJECT_ID.appspot.com",
+                messagingSenderId: "YOUR_SENDER_ID",
+                appId: "YOUR_APP_ID"
+              };
+
+              const app = initializeApp(firebaseConfig);
+              const db = getFirestore(app);
+
+              window.handleInquiry = async function (e) {
                 e.preventDefault();
                 const btn = document.getElementById('inquiry-submit');
                 const formData = new FormData(e.target);
@@ -160,20 +178,20 @@
                 btn.innerText = 'SENDING...';
 
                 try {
-                  const res = await fetch('http://localhost:5000/api/inquiry', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                  await addDoc(collection(db, "inquiries"), {
+                    ...data,
+                    timestamp: serverTimestamp()
                   });
-                  if (res.ok) alert('Inquiry sent successfully.');
-                  else alert('Failed to send inquiry.');
+                  alert('Interest submitted to Google Cloud successfully!');
+                  e.target.reset();
                 } catch (err) {
-                  alert('Error connecting to server.');
+                  console.error(err);
+                  alert('Error connecting to Google Cloud. Please check configuration.');
                 } finally {
                   btn.disabled = false;
                   btn.innerText = 'SEND INQUIRY';
                 }
-              }
+              };
             </script>
           </div>
           <div class="faq-section">
