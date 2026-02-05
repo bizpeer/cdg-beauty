@@ -39,9 +39,79 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderProducts(dbProducts);
   setupColorPicker(dbProducts);
+
+  // Fetch and render media lab items
+  if (supabase) {
+    fetchAndRenderMedia();
+  }
+
   setupScrollAnimations();
   setupVideoAutoplay();
 });
+
+async function fetchAndRenderMedia() {
+  const { data, error } = await supabase
+    .from('media_assets')
+    .select('*')
+    .order('order_index', { ascending: true });
+
+  if (error || !data) {
+    console.error('Error fetching media:', error);
+    return;
+  }
+
+  const videoGrid = document.getElementById('video-grid');
+  const pdfList = document.getElementById('pdf-list');
+  const archiveList = document.getElementById('archive-list');
+
+  if (videoGrid) {
+    const videos = data.filter(item => item.type === 'video').slice(0, 4);
+    videoGrid.innerHTML = videos.map(v => `
+      <div class="video-card animate-on-scroll" onclick="window.open('${v.file_path}', '_blank')">
+        <img src="${v.thumbnail_path || './assets/images/video-placeholder.jpg'}" alt="${v.title}" />
+        <div class="play-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="p-4 absolute bottom-0 left-0 text-white">
+            <h4 class="text-sm font-bold">${v.title}</h4>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  if (pdfList) {
+    const pdfs = data.filter(item => item.type === 'pdf').slice(0, 4);
+    pdfList.innerHTML = pdfs.map(p => `
+      <a href="${p.file_path}" target="_blank" class="pdf-item animate-on-scroll">
+        <div class="pdf-thumb">
+          <img src="${p.thumbnail_path || './assets/images/pdf-placeholder.jpg'}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover;" />
+        </div>
+        <div class="pdf-info">
+          <h4>${p.title}</h4>
+          <p>${p.sub_title || 'Click to view document'}</p>
+        </div>
+      </a>
+    `).join('');
+  }
+
+  if (archiveList) {
+    const archives = data.filter(item => item.type === 'archive');
+    archiveList.innerHTML = archives.map(a => `
+      <a href="${a.file_path}" target="_blank" class="archive-item animate-on-scroll">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span>${a.title}</span>
+      </a>
+    `).join('');
+  }
+}
 
 function renderProducts(currentProducts) {
   const skinGrid = document.getElementById('skin-grid');

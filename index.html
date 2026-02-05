@@ -106,14 +106,35 @@
 
     <!-- Media Lab Section -->
     <section id="media" class="section-padding container">
-      <h2 style="margin-bottom: var(--spacing-sm);">Media Lab</h2>
-      <div class="video-container">
-        <video id="brand-video" class="autoplay-video" muted playsinline loop>
-          <source src="./assets/videos/brand-video.mp4" type="video/mp4" />
-        </video>
+      <div class="media-header">
+        <h2 data-i18n="media.title">Media Lab</h2>
+        <p class="media-body">Explore our visuals and technical documents.</p>
       </div>
-      <div class="media-assets">
-        <a href="#" class="download-link">Download All Assets</a>
+
+      <div class="media-lab-grid">
+        <!-- Videos Left (4 items) -->
+        <div class="videos-section">
+          <h3>Featured Videos</h3>
+          <div id="video-grid" class="video-grid">
+            <!-- Videos injected by JS -->
+          </div>
+        </div>
+
+        <!-- PDFs Right (4 items) -->
+        <div class="pdfs-section">
+          <h3>Documentation</h3>
+          <div id="pdf-list" class="pdf-list">
+            <!-- PDFs injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Archive Section -->
+      <div class="archive-section">
+        <h3>Archives & Resources</h3>
+        <div id="archive-list" class="archive-list">
+          <!-- Archive items injected by JS -->
+        </div>
       </div>
     </section>
 

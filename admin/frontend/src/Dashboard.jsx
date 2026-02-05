@@ -3,8 +3,9 @@ import UserManagement from './UserManagement';
 import AssetManagement from './AssetManagement';
 import InquiryManagement from './InquiryManagement';
 import ProductManagement from './ProductManagement';
+import MediaManagement from './MediaManagement';
 import EmailConfig from './EmailConfig';
-import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package } from 'lucide-react';
+import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package, PlayCircle } from 'lucide-react';
 
 const Dashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('products');
@@ -12,9 +13,9 @@ const Dashboard = ({ user, onLogout }) => {
     const menuItems = [
         { id: 'products', label: 'Product Management', icon: <Package size={20} /> },
         { id: 'inquiries', label: 'Inquiry Management', icon: <Mail size={20} /> },
+        { id: 'media', label: 'Media Management', icon: <PlayCircle size={20} /> },
         { id: 'users', label: 'Admin Management', icon: <Users size={20} />, roles: ['main'] },
         { id: 'email', label: 'Email Config', icon: <Settings size={20} />, roles: ['main'] },
-        // { id: 'assets', label: 'Media Management', icon: <Image size={20} /> }, // Hidden temporarily
     ];
 
     const filteredMenu = menuItems.filter(item => !item.roles || (user.role && item.roles.includes(user.role)) || user.role === 'main');
@@ -78,7 +79,7 @@ const Dashboard = ({ user, onLogout }) => {
                 <main className="flex-1 overflow-y-auto p-10">
                     <div className="max-w-6xl mx-auto">
                         {activeTab === 'users' && <UserManagement />}
-                        {activeTab === 'assets' && <AssetManagement />}
+                        {activeTab === 'media' && <MediaManagement />}
                         {activeTab === 'products' && <ProductManagement />}
                         {activeTab === 'inquiries' && <InquiryManagement />}
                         {activeTab === 'email' && <EmailConfig />}

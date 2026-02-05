@@ -1,57 +1,137 @@
-/* Media Lab */
+/* Media Lab Enhanced */
 #media {
     background: var(--color-white);
 }
 
-.video-container {
-    width: 100%;
-    aspect-ratio: 16/9;
-    background: #000;
-    margin-bottom: var(--spacing-md);
-    position: relative;
-    overflow: hidden;
+.media-header {
+    margin-bottom: var(--spacing-lg);
 }
 
-@media (max-width: 768px) {
-    .video-container {
-        aspect-ratio: 4/3;
+.media-header h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.media-lab-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+@media (max-width: 1024px) {
+    .media-lab-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-.video-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.media-assets {
-    display: flex;
-    justify-content: center;
-    padding: var(--spacing-md) 0;
-}
-
-.download-link {
-    background: var(--color-black);
-    color: #fff;
-    padding: 1.5rem 3rem;
-    font-family: var(--font-heading);
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: var(--transition-smooth);
-    text-align: center;
+.video-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
 }
 
 @media (max-width: 600px) {
-    .download-link {
-        padding: 1rem 2rem;
-        font-size: 0.8rem;
-        width: 100%;
+    .video-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-.download-link:hover {
-    background: var(--color-red);
+.video-card {
+    cursor: pointer;
+    background: #000;
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.video-card:hover {
+    transform: scale(1.02);
+}
+
+.video-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+}
+
+.video-card .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    opacity: 0.8;
+}
+
+.pdf-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.pdf-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--color-gray);
+    border: 1px solid #eee;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    color: inherit;
+}
+
+.pdf-item:hover {
+    background: #fff;
+    border-color: var(--color-black);
+    transform: translateX(10px);
+}
+
+.pdf-thumb {
+    width: 80px;
+    height: 110px;
+    background: #ccc;
+    flex-shrink: 0;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-info h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.pdf-info p {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.archive-section {
+    border-top: 1px solid #ddd;
+    padding-top: var(--spacing-lg);
+}
+
+.archive-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.archive-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    color: inherit;
+}
+
+.archive-item:hover {
+    background: var(--color-gray);
 }
 
 /* Global Partner */
