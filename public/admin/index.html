@@ -1,14 +1,41 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/cdg-beauty/admin/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-    <script type="module" crossorigin src="/cdg-beauty/admin/assets/index-DGux04KH.js"></script>
-    <link rel="stylesheet" crossorigin href="/cdg-beauty/admin/assets/index-CsFygy2w.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDG Beauty Admin</title>
+  <script>
+    // Early Error Reporting
+    window.onerror = function (msg, url, line, col, error) {
+      var div = document.createElement('div');
+      div.style = 'position:fixed;top:0;left:0;width:100%;background:red;color:white;padding:20px;z-index:9999;font-family:monospace;';
+      div.innerHTML = '<h3>CRITICAL LOAD ERROR</h3>' + msg + '<br>at ' + url + ':' + line;
+      document.body.appendChild(div);
+      return false;
+    };
+  </script>
+  <style>
+    #root:empty::before {
+      content: "INITIALIZING DASHBOARD...";
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+      color: #ccc;
+      letter-spacing: 0.2em;
+      font-weight: bold;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-DGux04KH.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CsFygy2w.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <noscript>Please enable JavaScript to view this page.</noscript>
+</body>
+
 </html>
