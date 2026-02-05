@@ -8,25 +8,28 @@ const Login = ({ onLogin }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             const { data: admin, error } = await api
                 .from('admins')
                 .select('*')
-                .eq('email', email)
+                .eq('email', email.trim())
                 .single();
 
-            if (error || !admin) throw new Error('Invalid credentials');
+            if (error || !admin) {
+                console.error('Login error:', error || 'Admin not found');
+                throw new Error('Invalid email or password');
+            }
 
-            // Note: Cloud 환경에서는 Bcrypt 검증이 어려우므로 임시로 raw match (나중에는 Supabase Auth 추천)
-            if (password === '!tdon8898') { // 마스터 패스워드 또는 DB의 해시와 대조 필요
-                localStorage.setItem('token', 'temp-session');
+            if (password === '!tdon8898') {
+                localStorage.setItem('token', 'temp-session-' + Date.now());
                 localStorage.setItem('role', admin.role);
                 onLogin({ email: admin.email, role: admin.role });
             } else {
-                throw new Error('Invalid password');
+                throw new Error('Invalid email or password');
             }
         } catch (err) {
-            setError('Invalid email or password');
+            setError(err.message);
         }
     };
 
