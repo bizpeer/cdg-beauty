@@ -1,5 +1,5 @@
 const express = require('express');
-const admin = require('firebase-admin');
+const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
@@ -9,26 +9,10 @@ const nodemailer = require('nodemailer');
 
 dotenv.config();
 
-// 1. Google Cloud Firestore Initialization
-// In a real scenario, place your serviceAccountKey.json in the backend folder
-let db;
-try {
-    const serviceAccount = require('./serviceAccountKey.json');
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
-} catch (e) {
-    // Fallback for environment variables if key file is not present
-    console.log('Service account key file not found, trying environment initialization...');
-    if (process.env.GCLOUD_PROJECT_ID) {
-        admin.initializeApp({
-            projectId: process.env.GCLOUD_PROJECT_ID
-        });
-    } else {
-        console.error('Google Cloud Project ID is missing in .env');
-    }
-}
-db = admin.firestore();
+// 1. Supabase Initialization
+const supabaseUrl = process.env.SUPABASE_URL || 'https://agnztfqynbdvqdpxzajh.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Service role key for admin access
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // 2. Utils & Globals
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
@@ -44,22 +28,31 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 3. Pre-seed Main Admin (Firestore)
+// 3. Pre-seed Main Admin (Supabase)
 async function seedMainAdmin() {
     const mainEmail = process.env.ADMIN_EMAIL || 'top@kwavem.com';
-    const adminRef = db.collection('admins').doc(mainEmail);
-    const doc = await adminRef.get();
 
-    if (!doc.exists) {
+    const { data: existingAdmin, error: fetchError } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('email', mainEmail)
+        .single();
+
+    if (!existingAdmin && !fetchError) {
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASS || '!tdon8898', 10);
-        await adminRef.set({
-            email: mainEmail,
-            password: hashedPassword,
-            role: 'main',
-            receivesInquiries: false,
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-        console.log('Main admin seeded in Firestore.');
+        const { error: insertError } = await supabase
+            .from('admins')
+            .insert([
+                {
+                    email: mainEmail,
+                    password_hash: hashedPassword,
+                    role: 'main',
+                    receives_inquiries: false
+                }
+            ]);
+
+        if (insertError) console.error('Error seeding main admin:', insertError);
+        else console.log('Main admin seeded in Supabase.');
     }
 }
 seedMainAdmin().catch(console.error);
@@ -82,11 +75,15 @@ const authenticate = (req, res, next) => {
 app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const adminDoc = await db.collection('admins').doc(email).get();
-        if (!adminDoc.exists) return res.status(400).json({ message: 'Invalid credentials' });
+        const { data: adminData, error } = await supabase
+            .from('admins')
+            .select('*')
+            .eq('email', email)
+            .single();
 
-        const adminData = adminDoc.data();
-        const isMatch = await bcrypt.compare(password, adminData.password);
+        if (error || !adminData) return res.status(400).json({ message: 'Invalid credentials' });
+
+        const isMatch = await bcrypt.compare(password, adminData.password_hash);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ id: email, email: adminData.email, role: adminData.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -96,17 +93,16 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// 2. Sub-Admin Management (Firestore)
+// 2. Sub-Admin Management
 app.get('/api/admins', authenticate, async (req, res) => {
     if (req.user.role !== 'main') return res.status(403).json({ message: 'Permission denied' });
     try {
-        const snapshot = await db.collection('admins').where('role', '==', 'sub').get();
-        const admins = [];
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            delete data.password;
-            admins.push({ id: doc.id, ...data });
-        });
+        const { data: admins, error } = await supabase
+            .from('admins')
+            .select('id, email, role, receives_inquiries, created_at')
+            .eq('role', 'sub');
+
+        if (error) throw error;
         res.json(admins);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching admins' });
@@ -118,17 +114,11 @@ app.post('/api/admins', authenticate, async (req, res) => {
     const { email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
-        const adminRef = db.collection('admins').doc(email);
-        const doc = await adminRef.get();
-        if (doc.exists) return res.status(400).json({ message: 'Admin already exists' });
+        const { error } = await supabase
+            .from('admins')
+            .insert([{ email, password_hash: hashedPassword, role: 'sub' }]);
 
-        await adminRef.set({
-            email,
-            password: hashedPassword,
-            role: 'sub',
-            receivesInquiries: false,
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        if (error) return res.status(400).json({ message: 'Admin already exists or error occurred' });
         res.json({ message: 'Sub-admin created' });
     } catch (err) {
         res.status(500).json({ message: 'Error creating admin' });
@@ -138,7 +128,12 @@ app.post('/api/admins', authenticate, async (req, res) => {
 app.delete('/api/admins/:id', authenticate, async (req, res) => {
     if (req.user.role !== 'main') return res.status(403).json({ message: 'Permission denied' });
     try {
-        await db.collection('admins').doc(req.params.id).delete();
+        const { error } = await supabase
+            .from('admins')
+            .delete()
+            .eq('id', req.params.id);
+
+        if (error) throw error;
         res.json({ message: 'Deleted' });
     } catch (err) {
         res.status(500).json({ message: 'Error deleting admin' });
@@ -176,20 +171,17 @@ app.post('/api/assets/replace', authenticate, async (req, res) => {
     }
 });
 
-// 4. Inquiry Storage (Firestore)
+// 4. Inquiry Storage
 app.post('/api/inquiry', async (req, res) => {
     const { name, email, country, message } = req.body;
     try {
-        const inquiryRef = await db.collection('inquiries').add({
-            name,
-            email,
-            country,
-            message,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
-        });
+        const { data, error } = await supabase
+            .from('inquiries')
+            .insert([{ name, email, country, message }])
+            .select();
 
-        // Optional: Email notification logic can be reactivated here
-        res.json({ message: 'Inquiry saved to Google Cloud', id: inquiryRef.id });
+        if (error) throw error;
+        res.json({ message: 'Inquiry saved to Supabase', id: data[0].id });
     } catch (err) {
         res.status(500).json({ message: 'Error saving inquiry' });
     }
@@ -198,17 +190,48 @@ app.post('/api/inquiry', async (req, res) => {
 // 5. Inquiry View for Admins
 app.get('/api/inquiries', authenticate, async (req, res) => {
     try {
-        const snapshot = await db.collection('inquiries').orderBy('timestamp', 'desc').get();
-        const inquiries = [];
-        snapshot.forEach(doc => {
-            inquiries.push({ id: doc.id, ...doc.data() });
-        });
+        const { data: inquiries, error } = await supabase
+            .from('inquiries')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
         res.json(inquiries);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching inquiries' });
     }
 });
 
+// 6. Product Management
+app.get('/api/products', async (req, res) => {
+    try {
+        const { data: products, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('category', { ascending: false });
+
+        if (error) throw error;
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching products' });
+    }
+});
+
+app.put('/api/products/:id', authenticate, async (req, res) => {
+    const { name, tagline, img, color_code } = req.body;
+    try {
+        const { error } = await supabase
+            .from('products')
+            .update({ name, tagline, img, color_code })
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+        res.json({ message: 'Product updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating product' });
+    }
+});
+
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Google Cloud Backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Supabase Backend running on port ${PORT}`));

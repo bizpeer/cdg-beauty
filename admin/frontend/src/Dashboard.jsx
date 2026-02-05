@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { Users, Image, Settings, LogOut, ChevronRight, Mail } from 'lucide-react';
 import UserManagement from './UserManagement';
 import AssetManagement from './AssetManagement';
 import InquiryManagement from './InquiryManagement';
+import ProductManagement from './ProductManagement';
 import EmailConfig from './EmailConfig';
+import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package } from 'lucide-react';
 
 const Dashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('assets');
 
     const menuItems = [
         { id: 'assets', label: 'Media Management', icon: <Image size={20} /> },
+        { id: 'products', label: 'Product Management', icon: <Package size={20} /> },
         { id: 'inquiries', label: 'Inquiry Management', icon: <Mail size={20} /> },
         { id: 'users', label: 'Admin Management', icon: <Users size={20} />, roles: ['main'] },
         { id: 'email', label: 'Email Config', icon: <Settings size={20} />, roles: ['main'] },
@@ -77,6 +78,7 @@ const Dashboard = ({ user, onLogout }) => {
                     <div className="max-w-6xl mx-auto">
                         {activeTab === 'users' && <UserManagement />}
                         {activeTab === 'assets' && <AssetManagement />}
+                        {activeTab === 'products' && <ProductManagement />}
                         {activeTab === 'inquiries' && <InquiryManagement />}
                         {activeTab === 'email' && <EmailConfig />}
                     </div>

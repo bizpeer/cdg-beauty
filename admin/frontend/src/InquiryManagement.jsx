@@ -13,10 +13,15 @@ const InquiryManagement = () => {
 
     const fetchInquiries = async () => {
         try {
-            const res = await api.get('/inquiries');
-            setInquiries(res.data);
+            const { data, error } = await api
+                .from('inquiries')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setInquiries(data);
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching inquiries:', err);
         } finally {
             setLoading(false);
         }
@@ -75,7 +80,7 @@ const InquiryManagement = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-[10px] text-gray-400 flex items-center gap-1 uppercase">
-                                            <Clock size={12} /> {inquiry.timestamp ? new Date(inquiry.timestamp._seconds * 1000).toLocaleString() : 'N/A'}
+                                            <Clock size={12} /> {inquiry.created_at ? new Date(inquiry.created_at).toLocaleString() : 'N/A'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right text-gray-400">

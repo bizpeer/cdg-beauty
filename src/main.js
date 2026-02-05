@@ -8,20 +8,47 @@ import { products } from './utils/products';
 
 window.i18nManager = i18n;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Supabase Setup
+const SUPABASE_URL = "https://agnztfqynbdvqdpxzajh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_L1FEdbVz6jHV3bUvhmMjwg_vW2hZVfY";
+
+let supabase;
+if (window.supabase) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   i18n.updateLanguageElements();
-  renderProducts();
-  setupColorPicker();
+
+  // Fetch products from Supabase
+  let dbProducts = products; // Fallback to local
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('products').select('*');
+      if (!error && data && data.length > 0) {
+        // Transform to local format if needed or use as is
+        dbProducts = {
+          skin: data.filter(p => p.category === 'skin'),
+          color: data.filter(p => p.category === 'color')
+        };
+      }
+    } catch (e) {
+      console.error('Failed to fetch products from Supabase, using local fallback:', e);
+    }
+  }
+
+  renderProducts(dbProducts);
+  setupColorPicker(dbProducts);
   setupScrollAnimations();
   setupVideoAutoplay();
 });
 
-function renderProducts() {
+function renderProducts(currentProducts) {
   const skinGrid = document.getElementById('skin-grid');
   const colorGrid = document.getElementById('color-grid');
 
   if (skinGrid) {
-    skinGrid.innerHTML = products.skin.map(p => `
+    skinGrid.innerHTML = currentProducts.skin.map(p => `
       <div class="product-card animate-on-scroll">
         <div class="product-image-container">
           <img src="${p.img}" alt="${p.name}" class="product-image" loading="lazy" />
@@ -37,7 +64,7 @@ function renderProducts() {
   }
 
   if (colorGrid) {
-    colorGrid.innerHTML = products.color.map(p => `
+    colorGrid.innerHTML = currentProducts.color.map(p => `
       <div class="product-card animate-on-scroll">
         <div class="product-image-container">
           <img src="${p.img}" alt="${p.name}" class="product-image" loading="lazy" />
@@ -53,13 +80,13 @@ function renderProducts() {
   }
 }
 
-function setupColorPicker() {
+function setupColorPicker(currentProducts) {
   const swatchesContainer = document.getElementById('color-swatches');
   const overlay = document.getElementById('color-overlay');
 
   if (swatchesContainer && overlay) {
-    swatchesContainer.innerHTML = products.color.map(p => `
-      <span class="color-swatch" style="background: ${p.color}" data-color="${p.color}"></span>
+    swatchesContainer.innerHTML = currentProducts.color.map(p => `
+      <span class="color-swatch" style="background: ${p.color_code || p.color}" data-color="${p.color_code || p.color}"></span>
     `).join('');
 
     const swatches = document.querySelectorAll('.color-swatch');
