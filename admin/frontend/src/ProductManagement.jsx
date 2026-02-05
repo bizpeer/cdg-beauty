@@ -62,6 +62,14 @@ const ProductManagement = () => {
         }
     };
 
+    const resolveImgPath = (path) => {
+        if (!path) return '';
+        // If it's a relative path starting with ./assets or assets, adjust for admin subfolder
+        if (path.startsWith('./assets/')) return '.' + path;
+        if (path.startsWith('assets/')) return '../' + path;
+        return path;
+    };
+
     if (loading && products.length === 0) return <div className="p-20 text-center font-bold text-gray-400">LOADING PRODUCTS...</div>;
 
     return (
@@ -78,7 +86,7 @@ const ProductManagement = () => {
                 {products.map((product) => (
                     <div key={product.id} className="bg-white border border-gray-200 p-8 flex flex-col md:flex-row items-start gap-8 shadow-sm hover:shadow-md transition-shadow">
                         <div className="w-full md:w-48 aspect-square bg-gray-50 flex-shrink-0 border border-gray-100 p-4">
-                            <img src={product.img} alt={product.name} className="w-full h-full object-contain" />
+                            <img src={resolveImgPath(product.img)} alt={product.name} className="w-full h-full object-contain" />
                         </div>
 
                         {editingId === product.id ? (
