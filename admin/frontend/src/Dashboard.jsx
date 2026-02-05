@@ -6,17 +6,17 @@ import EmailConfig from './EmailConfig';
 import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package } from 'lucide-react';
 
 const Dashboard = ({ user, onLogout }) => {
-    const [activeTab, setActiveTab] = useState('assets');
+    const [activeTab, setActiveTab] = useState('products');
 
     const menuItems = [
-        { id: 'assets', label: 'Media Management', icon: <Image size={20} /> },
         { id: 'products', label: 'Product Management', icon: <Package size={20} /> },
         { id: 'inquiries', label: 'Inquiry Management', icon: <Mail size={20} /> },
         { id: 'users', label: 'Admin Management', icon: <Users size={20} />, roles: ['main'] },
         { id: 'email', label: 'Email Config', icon: <Settings size={20} />, roles: ['main'] },
+        // { id: 'assets', label: 'Media Management', icon: <Image size={20} /> }, // Hidden temporarily
     ];
 
-    const filteredMenu = menuItems.filter(item => !item.roles || item.roles.includes(user.role));
+    const filteredMenu = menuItems.filter(item => !item.roles || (user.role && item.roles.includes(user.role)) || user.role === 'main');
 
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
