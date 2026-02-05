@@ -1,0 +1,25 @@
+Fix inquiry form, update admin dashboard to be serverless, and add product management feature
+
+# Conflicts:
+#	admin/backend/.env
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# interactive rebase in progress; onto 57f657a
+# Last command done (1 command done):
+#    pick 5fc883d # Fix inquiry form, update admin dashboard to be serverless, and add product management feature
+# No commands remaining.
+# You are currently rebasing branch 'main' on '57f657a'.
+#
+# Changes to be committed:
+#	modified:   admin/backend/.env
+#	modified:   admin/backend/server.js
+#	modified:   admin/frontend/src/Dashboard.jsx
+#	modified:   admin/frontend/src/InquiryManagement.jsx
+#	modified:   admin/frontend/src/Login.jsx
+#	new file:   admin/frontend/src/ProductManagement.jsx
+#	modified:   admin/frontend/src/api.js
+#	modified:   index.html
+#	modified:   src/main.js
+#
