@@ -149,8 +149,8 @@ async function fetchAndRenderShowcase() {
     if (isStatement) {
       // STATEMENT LAYOUT (Side-by-Side: Image Left, Card Right)
       const featuresHtml = item.features ? item.features.map(f => `
-        <div class="flex items-start gap-4 mb-4">
-            <div class="p-3 bg-red-50 rounded-xl text-[#D30000]">
+        <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 12px; background-color: #FEF2F2; border-radius: 12px; color: #D30000;">
                 ${f.icon === 'heart' ?
           `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
           :
@@ -158,42 +158,42 @@ async function fetchAndRenderShowcase() {
         }
             </div>
             <div>
-                <h4 class="font-bold text-sm text-gray-900">${f.title}</h4>
-                <p class="text-xs text-gray-500">${f.desc}</p>
+                <h4 style="font-weight: bold; font-size: 14px; color: #111827;">${f.title}</h4>
+                <p style="font-size: 12px; color: #6B7280;">${f.desc}</p>
             </div>
         </div>
       `).join('') : '';
 
       return `
-        <div class="snap-start min-w-full h-full flex flex-row bg-[#F3F3F3] relative overflow-hidden group/slide">
+        <div style="scroll-snap-align: start; min-width: 100%; height: 100%; display: flex; flex-direction: row; background-color: #F3F3F3; position: relative; overflow: hidden;">
            
            <!-- Left: Image Section -->
-           <div class="w-1/2 h-full relative overflow-hidden">
-              <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover/slide:scale-105" />
+           <div style="width: 50%; height: 100%; position: relative; overflow: hidden;">
+              <img src="${item.image_url}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s;" />
            </div>
 
            <!-- Right: Content Section -->
-           <div class="w-1/2 h-full flex items-center justify-center p-12 relative">
+           <div style="width: 50%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 48px; position: relative;">
               <!-- White Card -->
-              <div class="bg-white rounded-[32px] p-12 shadow-2xl w-full max-w-lg relative z-10">
+              <div style="background: white; border-radius: 32px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 512px; position: relative; z-index: 10;">
                   
                   <!-- Tag -->
-                  <div class="inline-block bg-[#D30000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
+                  <div style="display: inline-block; background-color: #D30000; color: white; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px;">
                     ${item.subtitle}
                   </div>
 
                   <!-- Title -->
-                  <h2 class="text-6xl lg:text-8xl font-black italic tracking-tighter text-black mb-6 leading-[0.85]" style="font-style: italic; font-weight: 900;">
+                  <h2 style="font-size: 72px; font-weight: 900; font-style: italic; letter-spacing: -0.05em; color: black; margin-bottom: 24px; line-height: 0.85;">
                     ${item.title.split(' ').join('<br/>')}
                   </h2>
 
                   <!-- Description -->
-                  <p class="text-sm text-gray-500 mb-10 leading-relaxed max-w-sm">
+                  <p style="font-size: 14px; color: #6B7280; margin-bottom: 40px; line-height: 1.6; max-width: 384px;">
                     ${item.description}
                   </p>
 
                   <!-- Features -->
-                  <div class="space-y-2 border-t border-gray-100 pt-6">
+                  <div style="border-top: 1px solid #F3F4F6; padding-top: 24px;">
                     ${featuresHtml}
                   </div>
 
