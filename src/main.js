@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fetch and render media lab items
   if (supabase) {
     fetchAndRenderMedia();
+    fetchAndRenderContact();
+    syncHeroVideo();
   }
 
   setupScrollAnimations();
@@ -110,6 +112,45 @@ async function fetchAndRenderMedia() {
         <span>${a.title}</span>
       </a>
     `).join('');
+  }
+}
+
+async function fetchAndRenderContact() {
+  const { data, error } = await supabase
+    .from('contact_info')
+    .select('*')
+    .limit(1)
+    .single();
+
+  if (error || !data) return;
+
+  const addrEl = document.getElementById('display-address');
+  const phoneEl = document.getElementById('display-phone');
+  const emailEl = document.getElementById('display-email');
+
+  if (addrEl) addrEl.innerText = data.address;
+  if (phoneEl) phoneEl.innerText = data.phone;
+  if (emailEl) emailEl.innerText = data.email;
+}
+
+async function syncHeroVideo() {
+  const { data, error } = await supabase
+    .from('media_assets')
+    .select('*')
+    .eq('order_index', 1)
+    .eq('type', 'video')
+    .single();
+
+  if (error || !data) return;
+
+  const videoPlayer = document.getElementById('hero-video-player');
+  if (videoPlayer) {
+    const source = videoPlayer.querySelector('source');
+    if (source && source.src !== data.file_path) {
+      source.src = data.file_path;
+      videoPlayer.load();
+      videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+    }
   }
 }
 

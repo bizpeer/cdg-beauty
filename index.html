@@ -55,7 +55,8 @@
         </div>
         <div class="bento-item product-preview"
           style="grid-column: span 4; grid-row: span 2; background: var(--color-black); overflow: hidden; padding: 0;">
-          <video class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
+          <video id="hero-video-player" class="autoplay-video" muted playsinline loop
+            style="width: 100%; height: 100%; object-fit: cover;">
             <source src="./assets/videos/hero-dance.mp4" type="video/mp4" />
           </video>
         </div>
@@ -230,16 +231,24 @@
               };
             </script>
           </div>
-          <div class="faq-section">
-            <h3>FAQ</h3>
-            <div class="faq-item">
-              <h4>How can I become a distributor?</h4>
-              <p>Please fill out the form to our left. Our global team will review and contact you within 3 business
-                days.</p>
-            </div>
-            <div class="faq-item">
-              <h4>Is it available globally?</h4>
-              <p>We are currently expanding to Europe, Asia, and North America.</p>
+          <div class="faq-section" id="contact-display-section">
+            <h3 style="margin-bottom: 30px;">Contact Us</h3>
+            <div id="contact-info-content">
+              <div class="contact-item" style="margin-bottom: 25px;">
+                <label
+                  style="display:block; font-size:10px; font-weight:900; color:var(--color-black); margin-bottom:5px; text-transform:uppercase; letter-spacing:1px;">Address</label>
+                <p id="display-address" style="font-size:14px; line-height:1.6; font-weight:500;">Loading...</p>
+              </div>
+              <div class="contact-item" style="margin-bottom: 25px;">
+                <label
+                  style="display:block; font-size:10px; font-weight:900; color:var(--color-black); margin-bottom:5px; text-transform:uppercase; letter-spacing:1px;">Contact</label>
+                <p id="display-phone" style="font-size:14px; line-height:1.6; font-weight:500;">Loading...</p>
+              </div>
+              <div class="contact-item" style="margin-bottom: 25px;">
+                <label
+                  style="display:block; font-size:10px; font-weight:900; color:var(--color-black); margin-bottom:5px; text-transform:uppercase; letter-spacing:1px;">Email</label>
+                <p id="display-email" style="font-size:14px; line-height:1.6; font-weight:500;">Loading...</p>
+              </div>
             </div>
           </div>
         </div>
