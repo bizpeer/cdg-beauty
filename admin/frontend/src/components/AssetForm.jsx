@@ -37,20 +37,36 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             setFormData(prev => ({ ...prev, thumbnail_path: publicUrl }));
         } catch (err) {
             console.error('Error uploading file:', err);
-            alert('Error uploading file. Make sure "media" bucket exists.');
+            alert('Error uploading file. Make sure "media" bucket exists in Supabase Storage.');
         } finally {
             setUploading(false);
         }
     };
 
     const handleSave = () => {
+        // Validation: Required fields
+        if (!formData.title || !formData.file_path) {
+            alert('Title and File Path are required.');
+            return;
+        }
+
         const finalData = {
             ...formData,
             title: formData.title || 'New Asset',
-            // Default image if no thumbnail
-            thumbnail_path: formData.thumbnail_path || './assets/images/default_thumbnail.png'
+            // Default image if no thumbnail provided: use image004.png as requested
+            thumbnail_path: formData.thumbnail_path || './assets/images/image004.png'
         };
         onSave(finalData);
+    };
+
+    // Helper for rendering preview images in admin context
+    const renderPreview = (path) => {
+        if (!path) return null;
+        if (path.startsWith('./')) {
+            // Admin is in /admin/ subfolder, so ../ is needed to reach root assets
+            return `../${path.substring(2)}`;
+        }
+        return path;
     };
 
     return (
@@ -63,7 +79,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         className="w-full border-b-2 border-black py-2 font-bold focus:outline-none"
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="제목을 입력하세요"
+                        placeholder="제목을 입력하세요 (필수)"
                         autoFocus
                     />
                 </div>
@@ -105,7 +121,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         className="w-full border border-gray-200 p-3 text-sm font-mono focus:border-black focus:outline-none"
                         value={formData.file_path}
                         onChange={(e) => setFormData({ ...formData, file_path: e.target.value })}
-                        placeholder="https://... 또는 ./assets/videos/..."
+                        placeholder="https://... 또는 ./assets/videos/... (필수)"
                     />
                 </div>
                 <div className="space-y-2">
@@ -115,7 +131,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                             {uploading ? (
                                 <Loader2 className="animate-spin text-gray-400" size={20} />
                             ) : formData.thumbnail_path ? (
-                                <img src={formData.thumbnail_path.startsWith('./') ? `../${formData.thumbnail_path.substring(2)}` : formData.thumbnail_path} alt="Preview" className="w-full h-full object-cover" />
+                                <img src={renderPreview(formData.thumbnail_path)} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
                                 <Upload size={20} className="text-gray-300 group-hover:text-black" />
                             )}
@@ -129,7 +145,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         </div>
                         <div className="flex-1 text-[10px] text-gray-400 leading-relaxed">
                             <p>클릭하여 이미지를 업로드하세요.</p>
-                            <p>이미지가 없으면 기본 이미지가 사용됩니다.</p>
+                            <p>이미지가 없으면 <b>image004.png</b> 가 기본으로 설정됩니다.</p>
                         </div>
                     </div>
                 </div>

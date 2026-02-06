@@ -69,13 +69,16 @@ const MediaManagement = () => {
                     }
                 ]);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
             alert('Asset added successfully!');
             setIsAdding(false);
             fetchAssets();
         } catch (err) {
             console.error('Error adding asset:', err);
-            alert('Error adding asset.');
+            alert('Error adding asset: ' + (err.message || 'Unknown error'));
         }
     };
 
@@ -91,6 +94,14 @@ const MediaManagement = () => {
         }
     };
 
+    const renderPreview = (path) => {
+        if (!path) return null;
+        if (path.startsWith('./')) {
+            return `../${path.substring(2)}`;
+        }
+        return path;
+    };
+
     if (loading && assets.length === 0) return <div className="p-20 text-center font-bold text-gray-400">LOADING MEDIA ASSETS...</div>;
 
     return (
@@ -102,9 +113,7 @@ const MediaManagement = () => {
                 </div>
                 {!isAdding && (
                     <button
-                        onClick={() => {
-                            setIsAdding(true);
-                        }}
+                        onClick={() => setIsAdding(true)}
                         className="bg-black text-white px-6 py-4 text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-cdg-red transition-all shadow-lg"
                     >
                         <Plus size={16} /> Add New Asset
@@ -135,7 +144,7 @@ const MediaManagement = () => {
                             <div className="bg-white border border-gray-200 p-6 flex flex-col md:flex-row items-center gap-6 group hover:border-black transition-all">
                                 <div className="w-32 h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden flex items-center justify-center border border-gray-100">
                                     {asset.thumbnail_path ? (
-                                        <img src={asset.thumbnail_path.startsWith('./') ? `../${asset.thumbnail_path.substring(2)}` : asset.thumbnail_path} alt={asset.title} className="w-full h-full object-cover" />
+                                        <img src={renderPreview(asset.thumbnail_path)} alt={asset.title} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="flex flex-col items-center justify-center opacity-20">
                                             {asset.type === 'video' && <Play size={24} />}
@@ -158,9 +167,7 @@ const MediaManagement = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
-                                        onClick={() => {
-                                            setEditingId(asset.id);
-                                        }}
+                                        onClick={() => setEditingId(asset.id)}
                                         className="p-3 text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all"
                                     >
                                         <ImageIcon size={18} />
