@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Plus, Edit2, Trash2, Save, X, ImageIcon, Palette, Type } from 'lucide-react';
+import { Layout, Plus, Edit2, Trash2, Save, X, ImageIcon, Palette, Type, Upload, Loader2 } from 'lucide-react';
 import api from './api';
 
 const CollectionShowcase = () => {
@@ -8,6 +8,41 @@ const CollectionShowcase = () => {
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
     const [isCreating, setIsCreating] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    const uploadToSupabase = async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `showcase/${fileName}`;
+
+        const { error: uploadError } = await api.storage
+            .from('media')
+            .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = api.storage
+            .from('media')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const url = await uploadToSupabase(file);
+            setEditForm(prev => ({ ...prev, image_url: url }));
+        } catch (err) {
+            console.error('Error uploading image:', err);
+            alert('Error uploading image.');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     useEffect(() => {
         fetchItems();
@@ -147,13 +182,34 @@ const CollectionShowcase = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest">Image URL (Data URI recommended)</label>
-                                <input
-                                    className="w-full border-b border-gray-200 py-2 text-xs font-mono focus:outline-none focus:border-black"
-                                    value={editForm.image_url}
-                                    onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })}
-                                    placeholder="Paste Base64 or URL"
-                                />
+                                <label className="text-[10px] font-black uppercase tracking-widest">Image Upload (or URL)</label>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 relative">
+                                        <input
+                                            className="w-full border-b border-gray-200 py-2 text-xs font-mono focus:outline-none focus:border-black pr-20"
+                                            value={editForm.image_url}
+                                            onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })}
+                                            placeholder="Upload file or paste URL"
+                                        />
+                                        <div className="absolute right-0 bottom-2">
+                                            <label className="cursor-pointer hover:text-cdg-red transition-colors flex items-center gap-1">
+                                                {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+                                                <input
+                                                    type="file"
+                                                    className="hidden"
+                                                    onChange={handleImageUpload}
+                                                    accept="image/*"
+                                                    disabled={uploading}
+                                                />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {editForm.image_url && (
+                                        <div className="w-10 h-10 border border-gray-200 overflow-hidden">
+                                            <img src={editForm.image_url} alt="Preview" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest">Background Color</label>
@@ -200,12 +256,34 @@ const CollectionShowcase = () => {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest">Image URL</label>
-                                        <input
-                                            className="w-full border-b border-gray-200 py-2 text-xs font-mono focus:outline-none focus:border-black"
-                                            value={editForm.image_url}
-                                            onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })}
-                                        />
+                                        <label className="text-[10px] font-black uppercase tracking-widest">Image Upload (or URL)</label>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex-1 relative">
+                                                <input
+                                                    className="w-full border-b border-gray-200 py-2 text-xs font-mono focus:outline-none focus:border-black pr-20"
+                                                    value={editForm.image_url}
+                                                    onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })}
+                                                    placeholder="Upload file or paste URL"
+                                                />
+                                                <div className="absolute right-0 bottom-2">
+                                                    <label className="cursor-pointer hover:text-cdg-red transition-colors flex items-center gap-1">
+                                                        {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+                                                        <input
+                                                            type="file"
+                                                            className="hidden"
+                                                            onChange={handleImageUpload}
+                                                            accept="image/*"
+                                                            disabled={uploading}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            {editForm.image_url && (
+                                                <div className="w-10 h-10 border border-gray-200 overflow-hidden">
+                                                    <img src={editForm.image_url} alt="Preview" className="w-full h-full object-cover" />
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest">Background Color</label>
