@@ -14,6 +14,13 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
         order_index: 0,
         ...initialData
     });
+
+    // Determine if we are in 'link' or 'upload' mode for video based on initial path
+    const [videoMode, setVideoMode] = useState(
+        (initialData.type === 'video' && initialData.file_path && (initialData.file_path.includes('youtube.com') || initialData.file_path.includes('youtu.be')))
+            ? 'link' : 'upload'
+    );
+
     const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
     const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -58,7 +65,8 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
 
         setUploadingFile(true);
         try {
-            const url = await uploadToSupabase(file, 'documents');
+            const folder = formData.type === 'video' ? 'videos' : 'documents';
+            const url = await uploadToSupabase(file, folder);
             setFormData(prev => ({ ...prev, file_path: url }));
         } catch (err) {
             console.error('Error uploading file:', err);
@@ -113,9 +121,9 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         value={formData.type}
                         onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                     >
-                        <option value="video">Video (YouTube/Link)</option>
-                        <option value="pdf">PDF Document (Upload)</option>
-                        <option value="archive">Archive Resource (Upload)</option>
+                        <option value="video">Video</option>
+                        <option value="pdf">PDF Document</option>
+                        <option value="archive">Archive Resource</option>
                     </select>
                 </div>
                 <div className="space-y-2">
@@ -140,7 +148,24 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
 
             {/* Dynamic File/Link Section */}
             <div className="space-y-4 p-6 bg-gray-50 border border-gray-100">
-                {formData.type === 'video' ? (
+                {formData.type === 'video' && (
+                    <div className="flex gap-4 mb-4">
+                        <button
+                            onClick={() => setVideoMode('link')}
+                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${videoMode === 'link' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+                        >
+                            YouTube Link
+                        </button>
+                        <button
+                            onClick={() => setVideoMode('upload')}
+                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${videoMode === 'upload' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+                        >
+                            Upload File
+                        </button>
+                    </div>
+                )}
+
+                {((formData.type === 'video' && videoMode === 'link')) ? (
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
                             <Link2 size={12} /> Video Link (YouTube/Vimeo)
@@ -175,7 +200,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                                             className="hidden"
                                             onChange={handleMainFileChange}
                                             disabled={uploadingFile}
-                                            accept={formData.type === 'pdf' ? '.pdf' : '*/*'}
+                                            accept={formData.type === 'pdf' ? '.pdf' : (formData.type === 'video' ? 'video/*' : '*/*')}
                                         />
                                     </label>
                                 </div>

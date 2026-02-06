@@ -133,6 +133,12 @@ async function fetchAndRenderContact() {
   if (emailEl) emailEl.innerText = data.email;
 }
 
+function getYouTubeId(url) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
 async function syncHeroVideo() {
   const { data, error } = await supabase
     .from('media_assets')
@@ -143,13 +149,48 @@ async function syncHeroVideo() {
 
   if (error || !data) return;
 
-  const videoPlayer = document.getElementById('hero-video-player');
-  if (videoPlayer) {
-    const source = videoPlayer.querySelector('source');
-    if (source && source.src !== data.file_path) {
-      source.src = data.file_path;
-      videoPlayer.load();
-      videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+  const videoContainer = document.querySelector('.product-preview');
+  if (!videoContainer) return;
+
+  const ytId = getYouTubeId(data.file_path);
+
+  if (ytId) {
+    // If it's a YouTube video, replace content with iframe
+    const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
+
+    // Only update if changed
+    const currentIframe = videoContainer.querySelector('iframe');
+    if (!currentIframe || currentIframe.src !== embedUrl) {
+      videoContainer.innerHTML = `
+        <iframe 
+          src="${embedUrl}" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen
+          style="width: 100%; height: 100%; object-fit: cover; border: none; pointer-events: none;"
+        ></iframe>
+      `;
+    }
+  } else {
+    // If it's a direct file (Supabase or local)
+    const videoPlayer = document.getElementById('hero-video-player');
+
+    // If we had an iframe before, we need to restore the video element
+    if (!videoPlayer) {
+      videoContainer.innerHTML = `
+        <video id="hero-video-player" class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
+          <source src="${data.file_path}" type="video/mp4" />
+        </video>
+      `;
+      const newVideo = document.getElementById('hero-video-player');
+      newVideo.play().catch(e => console.log("Autoplay blocked:", e));
+    } else {
+      const source = videoPlayer.querySelector('source');
+      if (source && source.src !== data.file_path) {
+        source.src = data.file_path;
+        videoPlayer.load();
+        videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+      }
     }
   }
 }
