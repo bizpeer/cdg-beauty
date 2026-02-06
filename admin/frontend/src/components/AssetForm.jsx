@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Save, Upload, Loader2, Play, FileText, Archive } from 'lucide-react';
 import api from '../api';
 
+const DEFAULT_THUMBNAIL_URL = "https://agnztfqynbdvqdpxzajh.supabase.co/storage/v1/object/public/media/system/default_thumbnail.png";
+
 const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
     const [formData, setFormData] = useState({
         title: '',
@@ -44,7 +46,6 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
     };
 
     const handleSave = () => {
-        // Validation: Required fields
         if (!formData.title || !formData.file_path) {
             alert('Title and File Path are required.');
             return;
@@ -53,17 +54,15 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
         const finalData = {
             ...formData,
             title: formData.title || 'New Asset',
-            // Default image if no thumbnail provided: use image004.png as requested
-            thumbnail_path: formData.thumbnail_path || './assets/images/image004.png'
+            // ALWAYS use the persistent Supabase URL as default
+            thumbnail_path: formData.thumbnail_path || DEFAULT_THUMBNAIL_URL
         };
         onSave(finalData);
     };
 
-    // Helper for rendering preview images in admin context
     const renderPreview = (path) => {
         if (!path) return null;
         if (path.startsWith('./')) {
-            // Admin is in /admin/ subfolder, so ../ is needed to reach root assets
             return `../${path.substring(2)}`;
         }
         return path;
@@ -131,7 +130,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                             {uploading ? (
                                 <Loader2 className="animate-spin text-gray-400" size={20} />
                             ) : formData.thumbnail_path ? (
-                                <img src={renderPreview(formData.thumbnail_path)} alt="Preview" className="w-full h-full object-cover" />
+                                <img src={renderPreview(formData.thumbnail_path)} alt="Preview" className="w-full h-full object-cover border border-gray-200" />
                             ) : (
                                 <Upload size={20} className="text-gray-300 group-hover:text-black" />
                             )}
@@ -145,7 +144,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         </div>
                         <div className="flex-1 text-[10px] text-gray-400 leading-relaxed">
                             <p>클릭하여 이미지를 업로드하세요.</p>
-                            <p>이미지가 없으면 <b>image004.png</b> 가 기본으로 설정됩니다.</p>
+                            <p>이미지가 없으면 <b>Supabase Storage</b>에서 기본 이미지를 가져옵니다.</p>
                         </div>
                     </div>
                 </div>
