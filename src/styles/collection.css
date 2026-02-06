@@ -22,7 +22,8 @@
 
 @media (max-width: 600px) {
     .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: 1fr 1fr;
+        /* Force 2 columns for better mobile density */
         gap: var(--spacing-sm);
     }
 }

@@ -3,7 +3,15 @@
     min-height: calc(100vh - 80px);
     display: flex;
     align-items: center;
-    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    #hero {
+        margin-top: 70px;
+        /* Matching mobile header height */
+        min-height: auto;
+        padding-top: var(--spacing-md);
+    }
 }
 
 .bento-grid {

@@ -78,7 +78,7 @@ button {
   padding: var(--spacing-xl) 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .section-padding {
     padding: var(--spacing-lg) 0;
   }
@@ -97,6 +97,8 @@ button {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
+    grid-auto-rows: auto;
+    /* Allow rows to grow on mobile if needed */
   }
 }
 

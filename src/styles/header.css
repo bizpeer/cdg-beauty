@@ -18,10 +18,11 @@ header nav {
 
 @media (max-width: 768px) {
     header nav {
-        height: 70px;
+        height: auto;
+        padding: var(--spacing-sm) 0;
         flex-direction: column;
         justify-content: center;
-        gap: 5px;
+        gap: var(--spacing-xs);
     }
 }
 
@@ -80,7 +81,14 @@ header nav {
     gap: var(--spacing-sm);
     overflow-x: auto;
     max-width: 100%;
-    padding-bottom: 2px;
+    padding: 5px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Hide scrollbar for cleaner look */
+}
+
+.lang-selector::-webkit-scrollbar {
+    display: none;
 }
 
 @media (max-width: 768px) {
