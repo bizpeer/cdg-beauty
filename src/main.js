@@ -168,14 +168,14 @@ async function fetchAndRenderShowcase() {
         <div style="scroll-snap-align: start; min-width: 100%; height: 100%; display: flex; flex-direction: row; background-color: #F3F3F3; position: relative; overflow: hidden;">
            
            <!-- Left: Image Section -->
-           <div style="width: 50%; height: 100%; position: relative; overflow: hidden;">
+           <div class="showcase-image-section" style="width: 50%; height: 100%; position: relative; overflow: hidden;">
               <img src="${item.image_url}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s;" />
            </div>
 
            <!-- Right: Content Section -->
-           <div style="width: 50%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 48px; position: relative;">
+           <div class="showcase-content-section" style="width: 50%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 48px; position: relative;">
               <!-- White Card -->
-              <div style="background: white; border-radius: 32px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 512px; position: relative; z-index: 10;">
+              <div class="showcase-card" style="background: white; border-radius: 32px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 512px; position: relative; z-index: 10;">
                   
                   <!-- Tag -->
                   <div style="display: inline-block; background-color: #D30000; color: white; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px;">
@@ -183,12 +183,12 @@ async function fetchAndRenderShowcase() {
                   </div>
 
                   <!-- Title -->
-                  <h2 style="font-size: 72px; font-weight: 900; font-style: italic; letter-spacing: -0.05em; color: black; margin-bottom: 24px; line-height: 0.85;">
+                  <h2 class="showcase-title" style="font-size: 72px; font-weight: 900; font-style: italic; letter-spacing: -0.05em; color: black; margin-bottom: 24px; line-height: 0.85;">
                     ${item.title.split(' ').join('<br/>')}
                   </h2>
 
                   <!-- Description -->
-                  <p style="font-size: 14px; color: #6B7280; margin-bottom: 40px; line-height: 1.6; max-width: 384px;">
+                  <p class="showcase-description" style="font-size: 14px; color: #6B7280; margin-bottom: 40px; line-height: 1.6; max-width: 384px;">
                     ${item.description}
                   </p>
 
@@ -200,6 +200,34 @@ async function fetchAndRenderShowcase() {
               </div>
            </div>
         </div>
+        
+        <style>
+          @media (max-width: 768px) {
+            .showcase-image-section,
+            .showcase-content-section {
+              width: 100% !important;
+              height: 50% !important;
+            }
+            
+            .showcase-content-section {
+              padding: 24px !important;
+            }
+            
+            .showcase-card {
+              padding: 24px !important;
+            }
+            
+            .showcase-title {
+              font-size: 36px !important;
+              line-height: 0.9 !important;
+            }
+            
+            .showcase-description {
+              font-size: 13px !important;
+              margin-bottom: 24px !important;
+            }
+          }
+        </style>
       `;
     } else {
       // STANDARD LAYOUT (Glass Card at Bottom)
