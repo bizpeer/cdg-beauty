@@ -52,36 +52,100 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupVideoAutoplay();
 });
 
+const DEFAULT_SHOWCASE_DATA = [
+  {
+    id: 'default-1',
+    type: 'statement', // New field to distinguish layout
+    title: "PLAY BEAUTY",
+    subtitle: "COLLECTION 01",
+    image_url: "./assets/images/showcase-1.jpg", // Ensure this placeholder exists or use a robust fallback
+    bg_color: "#EBEBEB",
+    order_index: 1
+  },
+  {
+    id: 'default-2',
+    type: 'standard',
+    title: "Iconic Identity",
+    subtitle: "Signature Heart-Logo Branding",
+    image_url: "./assets/images/showcase-2.jpg",
+    bg_color: "#F5F5F5",
+    order_index: 2
+  },
+  {
+    id: 'default-3',
+    type: 'standard',
+    title: "Natural Purity",
+    subtitle: "Essential Skin Ingredients",
+    image_url: "./assets/images/showcase-3.jpg",
+    bg_color: "#FFFFFF",
+    order_index: 3
+  }
+];
+
 async function fetchAndRenderShowcase() {
+  let displayData = [];
+
+  // 1. Try fetching from Supabase
   const { data, error } = await supabase
     .from('collection_showcase')
     .select('*')
     .order('order_index', { ascending: true });
 
-  if (error || !data || data.length === 0) {
-    console.error('Error fetching showcase:', error);
-    // Remove showcase container if no data to keep clean
-    const showcaseContainer = document.getElementById('collection-showcase');
-    if (showcaseContainer) showcaseContainer.style.display = 'none';
-    return;
+  if (!error && data && data.length > 0) {
+    displayData = data;
+  } else {
+    // 2. Fallback to Default Data
+    console.log('Using default showcase data');
+    displayData = DEFAULT_SHOWCASE_DATA;
   }
 
   const slider = document.getElementById('showcase-slider');
   if (!slider) return;
 
-  slider.innerHTML = data.map(item => `
-    <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color}">
-      <img src="${item.image_url}" alt="${item.title}" class="max-h-[60%] lg:max-h-[70%] object-contain mix-blend-multiply transition-transform duration-700 group-hover/slide:scale-105" />
-      
-      <div class="absolute bottom-12 left-12 right-12 lg:bottom-20 lg:left-20 max-w-xl">
-        <div class="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/20 shadow-xl translate-y-12 opacity-0 animate-showcase-text">
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-2 block">${item.subtitle}</span>
-            <h3 class="text-4xl lg:text-6xl font-black text-black uppercase tracking-tighter mb-4">${item.title}</h3>
-            <div class="h-1 w-20 bg-red-600"></div>
+  // Clear existing content (important if re-rendering)
+  slider.innerHTML = '';
+
+  // 3. Render items with conditional layouts
+  slider.innerHTML = displayData.map(item => {
+    // Determine layout type (if not explicitly set in DB, guess based on content or default to standard)
+    // For DB items, we might need a convention or a new column. For now, let's assume standard unless specific keywords match
+    const isStatement = item.type === 'statement' || item.title === 'PLAY BEAUTY';
+
+    if (isStatement) {
+      // STATEMENT LAYOUT (Big Centered Text)
+      return `
+        <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color || '#EBEBEB'}">
+           <!-- Distinctive big text styling for 'Statement' items -->
+           <div class="z-10 text-center mix-blend-multiply opacity-0 animate-showcase-text" style="animation-delay: 0.2s;">
+              <h2 class="text-[12vw] lg:text-[15vw] leading-none font-black tracking-tighter text-black mb-4 scale-y-110 transform transition-transform duration-700 group-hover/slide:scale-y-100">
+                ${item.title}
+              </h2>
+              <p class="text-sm lg:text-lg font-bold uppercase tracking-[0.5em] text-red-600">
+                ${item.subtitle || 'An experimental, anti-fashion artistic collaboration.'}
+              </p>
+           </div>
+           
+           <!-- Optional: Background image can be subtle or hidden for statement cards if text is the hero -->
+           ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-multiply" />` : ''}
         </div>
-      </div>
-    </div>
-  `).join('');
+      `;
+    } else {
+      // STANDARD LAYOUT (Glass Card at Bottom)
+      return `
+        <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color || '#F3F3F3'}">
+          <img src="${item.image_url}" alt="${item.title}" class="max-h-[60%] lg:max-h-[70%] object-contain mix-blend-multiply transition-transform duration-700 group-hover/slide:scale-105" />
+          
+          <div class="absolute bottom-12 left-12 right-12 lg:bottom-20 lg:left-20 max-w-xl">
+            <div class="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/20 shadow-xl translate-y-12 opacity-0 animate-showcase-text">
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-2 block">${item.subtitle}</span>
+                <h3 class="text-4xl lg:text-6xl font-black text-black uppercase tracking-tighter mb-4">${item.title}</h3>
+                <div class="h-1 w-20 bg-red-600"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }).join('');
 }
 
 async function fetchAndRenderMedia() {
