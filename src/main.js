@@ -112,11 +112,27 @@ async function fetchAndRenderShowcase() {
 
   // 3. Render items with conditional layouts
   slider.innerHTML = displayData.map(item => {
-    const isStatement = item.type === 'statement' || item.title === 'PLAY BEAUTY';
+    // Robust check for Statement Layout
+    const isStatement = (item.type === 'statement') || (item.title && item.title.toUpperCase() === 'PLAY BEAUTY');
+
+    // Polyfill features/description for PLAY BEAUTY if missing (e.g. from DB)
+    if (isStatement) {
+      if (!item.features) {
+        item.features = [
+          { title: "Iconic Identity", desc: "Signature Heart Logo Branding", icon: "heart" },
+          { title: "Natural Purity", desc: "Essential Skin Ingredients", icon: "sparkle" }
+        ];
+      }
+      if (!item.description) {
+        item.description = "An experimental, anti-fashion artistic collaboration. Rooted in emotion and deconstructive purity.";
+      }
+      if (!item.subtitle || item.subtitle === 'COLLECTION 01') {
+        item.subtitle = "PREMIUM LINE-UP";
+      }
+    }
 
     if (isStatement) {
       // STATEMENT LAYOUT (Side-by-Side: Image Left, Card Right)
-      // Features rendering helper
       const featuresHtml = item.features ? item.features.map(f => `
         <div class="flex items-start gap-4 mb-4">
             <div class="p-3 bg-red-50 rounded-xl text-[#D30000]">
@@ -148,7 +164,7 @@ async function fetchAndRenderShowcase() {
                   
                   <!-- Tag -->
                   <div class="inline-block bg-[#D30000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
-                    ${item.subtitle || 'Premium Line-up'}
+                    ${item.subtitle}
                   </div>
 
                   <!-- Title -->
@@ -158,7 +174,7 @@ async function fetchAndRenderShowcase() {
 
                   <!-- Description -->
                   <p class="text-sm text-gray-500 mb-10 leading-relaxed max-w-sm">
-                    ${item.description || 'An experimental, anti-fashion artistic collaboration.'}
+                    ${item.description}
                   </p>
 
                   <!-- Features -->
@@ -172,12 +188,13 @@ async function fetchAndRenderShowcase() {
       `;
     } else {
       // STANDARD LAYOUT (Glass Card at Bottom)
+      // Removed opacity-0 to ensure visibility
       return `
         <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color || '#F3F3F3'}">
           <img src="${item.image_url}" alt="${item.title}" class="max-h-[60%] lg:max-h-[70%] object-contain mix-blend-multiply transition-transform duration-700 group-hover/slide:scale-105" />
           
           <div class="absolute bottom-12 left-12 right-12 lg:bottom-20 lg:left-20 max-w-xl">
-            <div class="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/20 shadow-xl translate-y-12 opacity-0 animate-showcase-text">
+            <div class="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/20 shadow-xl translate-y-12 animate-showcase-text">
                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-2 block">${item.subtitle}</span>
                 <h3 class="text-4xl lg:text-6xl font-black text-black uppercase tracking-tighter mb-4">${item.title}</h3>
                 <div class="h-1 w-20 bg-red-600"></div>
