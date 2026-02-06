@@ -97,36 +97,51 @@ async function fetchAndRenderShowcase() {
     .order('order_index', { ascending: true });
 
   if (!error && data && data.length > 0) {
+    console.log('📊 Showcase data from Supabase:', data);
     displayData = data;
   } else {
     // 2. Fallback to Default Data using deep copy to avoid mutation issues if reused
-    console.log('Using default showcase data');
+    console.log('⚠️ Using default showcase data (no DB data found)');
     displayData = JSON.parse(JSON.stringify(DEFAULT_SHOWCASE_DATA));
   }
 
   const slider = document.getElementById('showcase-slider');
-  if (!slider) return;
+  if (!slider) {
+    console.error('❌ showcase-slider element not found!');
+    return;
+  }
 
   // Clear existing content (important if re-rendering)
   slider.innerHTML = '';
 
   // 3. Render items with conditional layouts
-  slider.innerHTML = displayData.map(item => {
-    // Robust check for Statement Layout
-    const isStatement = (item.type === 'statement') || (item.title && item.title.toUpperCase() === 'PLAY BEAUTY');
+  slider.innerHTML = displayData.map((item, index) => {
+    console.log(`🔍 Processing item ${index}:`, item);
 
-    // Polyfill features/description for PLAY BEAUTY if missing (e.g. from DB)
+    // Robust check for Statement Layout
+    // Check: type field, title match (case-insensitive, whitespace-trimmed), or first item
+    const titleNormalized = (item.title || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    const isStatement = (item.type === 'statement') ||
+      (titleNormalized === 'PLAY BEAUTY') ||
+      (index === 0); // Force first item to be statement layout
+
+    console.log(`  → isStatement: ${isStatement}, title: "${item.title}", normalized: "${titleNormalized}"`);
+
+    // Polyfill features/description for Statement items if missing (e.g. from DB)
     if (isStatement) {
       if (!item.features) {
+        console.log('  → Adding default features');
         item.features = [
           { title: "Iconic Identity", desc: "Signature Heart Logo Branding", icon: "heart" },
           { title: "Natural Purity", desc: "Essential Skin Ingredients", icon: "sparkle" }
         ];
       }
       if (!item.description) {
+        console.log('  → Adding default description');
         item.description = "An experimental, anti-fashion artistic collaboration. Rooted in emotion and deconstructive purity.";
       }
       if (!item.subtitle || item.subtitle === 'COLLECTION 01') {
+        console.log('  → Setting subtitle to PREMIUM LINE-UP');
         item.subtitle = "PREMIUM LINE-UP";
       }
     }
