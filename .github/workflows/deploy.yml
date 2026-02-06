@@ -31,7 +31,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build:all
+          mkdir -p dist/admin
+          cp -r admin/frontend/dist/* dist/admin/
+          # Ensure assets are also correctly placed if needed
+          # cp -r public/assets dist/assets (vite build already does this)
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
