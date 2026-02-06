@@ -165,17 +165,17 @@ async function fetchAndRenderShowcase() {
       `).join('') : '';
 
       return `
-        <div class="snap-start min-w-full h-full flex flex-col lg:flex-row bg-[#F3F3F3] relative overflow-hidden group/slide">
+        <div class="snap-start min-w-full h-full flex flex-row bg-[#F3F3F3] relative overflow-hidden group/slide">
            
            <!-- Left: Image Section -->
-           <div class="w-full lg:w-1/2 h-1/2 lg:h-full relative overflow-hidden">
+           <div class="w-1/2 h-full relative overflow-hidden">
               <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover/slide:scale-105" />
            </div>
 
            <!-- Right: Content Section -->
-           <div class="w-full lg:w-1/2 h-1/2 lg:h-full flex items-center justify-center p-6 lg:p-12 relative">
+           <div class="w-1/2 h-full flex items-center justify-center p-12 relative">
               <!-- White Card -->
-              <div class="bg-white rounded-[32px] p-8 lg:p-12 shadow-2xl w-full max-w-lg relative z-10">
+              <div class="bg-white rounded-[32px] p-12 shadow-2xl w-full max-w-lg relative z-10">
                   
                   <!-- Tag -->
                   <div class="inline-block bg-[#D30000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
@@ -183,7 +183,7 @@ async function fetchAndRenderShowcase() {
                   </div>
 
                   <!-- Title -->
-                  <h2 class="text-5xl lg:text-7xl font-black italic tracking-tighter text-black mb-6 leading-[0.9]">
+                  <h2 class="text-6xl lg:text-8xl font-black italic tracking-tighter text-black mb-6 leading-[0.85]" style="font-style: italic; font-weight: 900;">
                     ${item.title.split(' ').join('<br/>')}
                   </h2>
 
