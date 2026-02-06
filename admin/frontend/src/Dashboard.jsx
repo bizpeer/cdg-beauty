@@ -6,7 +6,8 @@ import ProductManagement from './ProductManagement';
 import MediaManagement from './MediaManagement';
 import EmailConfig from './EmailConfig';
 import ContactManagement from './ContactManagement';
-import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package, PlayCircle, Info } from 'lucide-react';
+import CollectionShowcase from './CollectionShowcase';
+import { Users, Image, Settings, LogOut, ChevronRight, Mail, Package, PlayCircle, Info, Sparkles } from 'lucide-react';
 
 const Dashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('products');
@@ -15,6 +16,7 @@ const Dashboard = ({ user, onLogout }) => {
         { id: 'products', label: 'Product Management', icon: <Package size={20} /> },
         { id: 'inquiries', label: 'Inquiry Management', icon: <Mail size={20} /> },
         { id: 'media', label: 'Media Management', icon: <PlayCircle size={20} /> },
+        { id: 'collection_showcase', label: 'Collection Showcase', icon: <Sparkles size={20} /> },
         { id: 'contact', label: 'Contact Us Config', icon: <Info size={20} /> },
         { id: 'users', label: 'Admin Management', icon: <Users size={20} />, roles: ['main'] },
         { id: 'email', label: 'Email Config', icon: <Settings size={20} />, roles: ['main'] },
@@ -83,6 +85,7 @@ const Dashboard = ({ user, onLogout }) => {
                         {activeTab === 'users' && <UserManagement />}
                         {activeTab === 'media' && <MediaManagement />}
                         {activeTab === 'products' && <ProductManagement />}
+                        {activeTab === 'collection_showcase' && <CollectionShowcase />}
                         {activeTab === 'inquiries' && <InquiryManagement />}
                         {activeTab === 'email' && <EmailConfig />}
                         {activeTab === 'contact' && <ContactManagement />}

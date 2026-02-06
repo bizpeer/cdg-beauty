@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Fetch and render media lab items
   if (supabase) {
+    fetchAndRenderShowcase();
     fetchAndRenderMedia();
     fetchAndRenderContact();
     syncHeroVideo();
@@ -50,6 +51,38 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupScrollAnimations();
   setupVideoAutoplay();
 });
+
+async function fetchAndRenderShowcase() {
+  const { data, error } = await supabase
+    .from('collection_showcase')
+    .select('*')
+    .order('order_index', { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    console.error('Error fetching showcase:', error);
+    // Remove showcase container if no data to keep clean
+    const showcaseContainer = document.getElementById('collection-showcase');
+    if (showcaseContainer) showcaseContainer.style.display = 'none';
+    return;
+  }
+
+  const slider = document.getElementById('showcase-slider');
+  if (!slider) return;
+
+  slider.innerHTML = data.map(item => `
+    <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color}">
+      <img src="${item.image_url}" alt="${item.title}" class="max-h-[60%] lg:max-h-[70%] object-contain mix-blend-multiply transition-transform duration-700 group-hover/slide:scale-105" />
+      
+      <div class="absolute bottom-12 left-12 right-12 lg:bottom-20 lg:left-20 max-w-xl">
+        <div class="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/20 shadow-xl translate-y-12 opacity-0 animate-showcase-text">
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-2 block">${item.subtitle}</span>
+            <h3 class="text-4xl lg:text-6xl font-black text-black uppercase tracking-tighter mb-4">${item.title}</h3>
+            <div class="h-1 w-20 bg-red-600"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
 
 async function fetchAndRenderMedia() {
   const { data, error } = await supabase
