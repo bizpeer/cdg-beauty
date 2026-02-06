@@ -119,7 +119,7 @@ async function fetchAndRenderShowcase() {
       // Features rendering helper
       const featuresHtml = item.features ? item.features.map(f => `
         <div class="flex items-start gap-4 mb-4">
-            <div class="p-3 bg-red-50 rounded-xl text-cdg-red">
+            <div class="p-3 bg-red-50 rounded-xl text-[#D30000]">
                 ${f.icon === 'heart' ?
           `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
           :
@@ -144,7 +144,7 @@ async function fetchAndRenderShowcase() {
            <!-- Right: Content Section -->
            <div class="w-full lg:w-1/2 h-1/2 lg:h-full flex items-center justify-center p-6 lg:p-12 relative">
               <!-- White Card -->
-              <div class="bg-white rounded-[32px] p-8 lg:p-12 shadow-2xl w-full max-w-lg relative animate-showcase-text translate-y-12 opacity-0">
+              <div class="bg-white rounded-[32px] p-8 lg:p-12 shadow-2xl w-full max-w-lg relative z-10">
                   
                   <!-- Tag -->
                   <div class="inline-block bg-[#D30000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
