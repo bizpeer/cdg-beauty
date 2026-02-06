@@ -55,11 +55,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 const DEFAULT_SHOWCASE_DATA = [
   {
     id: 'default-1',
-    type: 'statement', // New field to distinguish layout
+    type: 'statement',
     title: "PLAY BEAUTY",
-    subtitle: "COLLECTION 01",
-    image_url: "./assets/images/showcase-1.jpg", // Ensure this placeholder exists or use a robust fallback
-    bg_color: "#EBEBEB",
+    subtitle: "PREMIUM LINE-UP", // Changed to tagline style
+    description: "An experimental, anti-fashion artistic collaboration. Rooted in emotion and deconstructive purity.",
+    features: [
+      { title: "Iconic Identity", desc: "Signature Heart Logo Branding", icon: "heart" },
+      { title: "Natural Purity", desc: "Essential Skin Ingredients", icon: "sparkle" }
+    ],
+    image_url: "./assets/images/showcase-1.jpg",
+    bg_color: "#F3F3F3", // Light grey background for the container
     order_index: 1
   },
   {
@@ -94,9 +99,9 @@ async function fetchAndRenderShowcase() {
   if (!error && data && data.length > 0) {
     displayData = data;
   } else {
-    // 2. Fallback to Default Data
+    // 2. Fallback to Default Data using deep copy to avoid mutation issues if reused
     console.log('Using default showcase data');
-    displayData = DEFAULT_SHOWCASE_DATA;
+    displayData = JSON.parse(JSON.stringify(DEFAULT_SHOWCASE_DATA));
   }
 
   const slider = document.getElementById('showcase-slider');
@@ -107,26 +112,62 @@ async function fetchAndRenderShowcase() {
 
   // 3. Render items with conditional layouts
   slider.innerHTML = displayData.map(item => {
-    // Determine layout type (if not explicitly set in DB, guess based on content or default to standard)
-    // For DB items, we might need a convention or a new column. For now, let's assume standard unless specific keywords match
     const isStatement = item.type === 'statement' || item.title === 'PLAY BEAUTY';
 
     if (isStatement) {
-      // STATEMENT LAYOUT (Big Centered Text)
+      // STATEMENT LAYOUT (Side-by-Side: Image Left, Card Right)
+      // Features rendering helper
+      const featuresHtml = item.features ? item.features.map(f => `
+        <div class="flex items-start gap-4 mb-4">
+            <div class="p-3 bg-red-50 rounded-xl text-cdg-red">
+                ${f.icon === 'heart' ?
+          `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
+          :
+          `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>`
+        }
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-gray-900">${f.title}</h4>
+                <p class="text-xs text-gray-500">${f.desc}</p>
+            </div>
+        </div>
+      `).join('') : '';
+
       return `
-        <div class="snap-start min-w-full h-full flex flex-col items-center justify-center p-8 bg-cover bg-center group/slide relative overflow-hidden" style="background-color: ${item.bg_color || '#EBEBEB'}">
-           <!-- Distinctive big text styling for 'Statement' items -->
-           <div class="z-10 text-center mix-blend-multiply opacity-0 animate-showcase-text" style="animation-delay: 0.2s;">
-              <h2 class="text-[12vw] lg:text-[15vw] leading-none font-black tracking-tighter text-black mb-4 scale-y-110 transform transition-transform duration-700 group-hover/slide:scale-y-100">
-                ${item.title}
-              </h2>
-              <p class="text-sm lg:text-lg font-bold uppercase tracking-[0.5em] text-red-600">
-                ${item.subtitle || 'An experimental, anti-fashion artistic collaboration.'}
-              </p>
-           </div>
+        <div class="snap-start min-w-full h-full flex flex-col lg:flex-row bg-[#F3F3F3] relative overflow-hidden group/slide">
            
-           <!-- Optional: Background image can be subtle or hidden for statement cards if text is the hero -->
-           ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-multiply" />` : ''}
+           <!-- Left: Image Section -->
+           <div class="w-full lg:w-1/2 h-1/2 lg:h-full relative overflow-hidden">
+              <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover/slide:scale-105" />
+           </div>
+
+           <!-- Right: Content Section -->
+           <div class="w-full lg:w-1/2 h-1/2 lg:h-full flex items-center justify-center p-6 lg:p-12 relative">
+              <!-- White Card -->
+              <div class="bg-white rounded-[32px] p-8 lg:p-12 shadow-2xl w-full max-w-lg relative animate-showcase-text translate-y-12 opacity-0">
+                  
+                  <!-- Tag -->
+                  <div class="inline-block bg-[#D30000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
+                    ${item.subtitle || 'Premium Line-up'}
+                  </div>
+
+                  <!-- Title -->
+                  <h2 class="text-5xl lg:text-7xl font-black italic tracking-tighter text-black mb-6 leading-[0.9]">
+                    ${item.title.split(' ').join('<br/>')}
+                  </h2>
+
+                  <!-- Description -->
+                  <p class="text-sm text-gray-500 mb-10 leading-relaxed max-w-sm">
+                    ${item.description || 'An experimental, anti-fashion artistic collaboration.'}
+                  </p>
+
+                  <!-- Features -->
+                  <div class="space-y-2 border-t border-gray-100 pt-6">
+                    ${featuresHtml}
+                  </div>
+
+              </div>
+           </div>
         </div>
       `;
     } else {
