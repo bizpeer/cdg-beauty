@@ -26,6 +26,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
 
     // Common upload function
     const uploadToSupabase = async (file, folder) => {
+        console.log(`Uploading ${file.name} to ${folder}...`);
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
         const filePath = `${folder}/${fileName}`;
@@ -34,12 +35,16 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             .from('media')
             .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+            console.error('Upload error details:', uploadError);
+            throw uploadError;
+        }
 
         const { data: { publicUrl } } = api.storage
             .from('media')
             .getPublicUrl(filePath);
 
+        console.log(`Upload successful: ${publicUrl}`);
         return publicUrl;
     };
 
@@ -53,7 +58,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             setFormData(prev => ({ ...prev, thumbnail_path: url }));
         } catch (err) {
             console.error('Error uploading thumbnail:', err);
-            alert('Error uploading thumbnail.');
+            alert('Error uploading thumbnail: ' + (err.message || 'Unknown error'));
         } finally {
             setUploadingThumbnail(false);
         }
@@ -63,6 +68,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        console.log('Main file selected:', file.name, file.type);
         setUploadingFile(true);
         try {
             const folder = formData.type === 'video' ? 'videos' : 'documents';
@@ -70,7 +76,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             setFormData(prev => ({ ...prev, file_path: url }));
         } catch (err) {
             console.error('Error uploading file:', err);
-            alert('Error uploading file.');
+            alert('Error uploading file: ' + (err.message || 'Unknown error'));
         } finally {
             setUploadingFile(false);
         }
@@ -168,7 +174,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                 {((formData.type === 'video' && videoMode === 'link')) ? (
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                            <Link2 size={12} /> Video Link (YouTube/Vimeo)
+                            <Link2 size={12} /> YouTube/Vimeo Link
                         </label>
                         <input
                             className="w-full border border-gray-200 p-3 text-sm font-mono focus:border-black focus:outline-none bg-white"
@@ -176,7 +182,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                             onChange={(e) => setFormData({ ...formData, file_path: e.target.value })}
                             placeholder="https://www.youtube.com/watch?v=..."
                         />
-                        <p className="text-[9px] text-gray-400">유튜브나 비메오 등 재생 가능한 영상 링크를 입력하세요.</p>
+                        <p className="text-[9px] text-gray-400">유튜브나 비메오 링크를 입력할 수 있습니다.</p>
                     </div>
                 ) : (
                     <div className="space-y-2">
@@ -206,6 +212,7 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                                 </div>
                             </div>
                         </div>
+                        <p className="text-[9px] text-gray-400">직접 비디오 파일을 업로드할 수 있습니다 (MP4 등).</p>
                     </div>
                 )}
             </div>

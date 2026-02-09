@@ -347,48 +347,48 @@ async function syncHeroVideo() {
 
   if (error || !data) return;
 
-  const videoContainer = document.querySelector('.product-preview');
-  if (!videoContainer) return;
-
-  const ytId = getYouTubeId(data.file_path);
-
-  if (ytId) {
-    // If it's a YouTube video, replace content with iframe
-    const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
-
-    // Only update if changed
-    const currentIframe = videoContainer.querySelector('iframe');
-    if (!currentIframe || currentIframe.src !== embedUrl) {
-      videoContainer.innerHTML = `
-        <iframe 
-          src="${embedUrl}" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen
-          style="width: 100%; height: 100%; object-fit: cover; border: none; pointer-events: none;"
-        ></iframe>
-      `;
+  // 1. Hero Video Update
+  const heroContainer = document.querySelector('.product-preview');
+  if (heroContainer) {
+    const ytId = getYouTubeId(data.file_path);
+    if (ytId) {
+      const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
+      const currentIframe = heroContainer.querySelector('iframe');
+      if (!currentIframe || currentIframe.src !== embedUrl) {
+        heroContainer.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; object-fit: cover; border: none; pointer-events: none;"></iframe>`;
+      }
+    } else {
+      let videoPlayer = document.getElementById('hero-video-player');
+      if (!videoPlayer) {
+        heroContainer.innerHTML = `<video id="hero-video-player" class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;"><source src="${data.file_path}" type="video/mp4" /></video>`;
+        videoPlayer = document.getElementById('hero-video-player');
+        videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+      } else {
+        const source = videoPlayer.querySelector('source');
+        if (source && source.src !== data.file_path) {
+          source.src = data.file_path;
+          videoPlayer.load();
+          videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+        }
+      }
     }
-  } else {
-    // If it's a direct file (Supabase or local)
-    const videoPlayer = document.getElementById('hero-video-player');
+  }
 
-    // If we had an iframe before, we need to restore the video element
-    if (!videoPlayer) {
-      videoContainer.innerHTML = `
-        <video id="hero-video-player" class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
+  // 2. Bottom Video Update
+  const bottomContainer = document.getElementById('bottom-video-container');
+  if (bottomContainer) {
+    const ytId = getYouTubeId(data.file_path);
+    if (ytId) {
+      const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
+      bottomContainer.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; object-fit: cover; border: none; pointer-events: none;"></iframe>`;
+    } else {
+      bottomContainer.innerHTML = `
+        <video class="autoplay-video" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
           <source src="${data.file_path}" type="video/mp4" />
         </video>
       `;
-      const newVideo = document.getElementById('hero-video-player');
-      newVideo.play().catch(e => console.log("Autoplay blocked:", e));
-    } else {
-      const source = videoPlayer.querySelector('source');
-      if (source && source.src !== data.file_path) {
-        source.src = data.file_path;
-        videoPlayer.load();
-        videoPlayer.play().catch(e => console.log("Autoplay blocked:", e));
-      }
+      const video = bottomContainer.querySelector('video');
+      video.play().catch(e => console.log("Bottom video autoplay blocked:", e));
     }
   }
 }
