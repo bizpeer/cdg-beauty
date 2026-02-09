@@ -48,21 +48,8 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
         return publicUrl;
     };
 
-    const handleThumbnailChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        setUploadingThumbnail(true);
-        try {
-            const url = await uploadToSupabase(file, 'thumbnails');
-            setFormData(prev => ({ ...prev, thumbnail_path: url }));
-        } catch (err) {
-            console.error('Error uploading thumbnail:', err);
-            alert('Error uploading thumbnail: ' + (err.message || 'Unknown error'));
-        } finally {
-            setUploadingThumbnail(false);
-        }
-    };
+    const fileInputRef = React.useRef(null);
+    const thumbInputRef = React.useRef(null);
 
     const handleMainFileChange = async (e) => {
         const file = e.target.files[0];
@@ -79,6 +66,25 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             alert('Error uploading file: ' + (err.message || 'Unknown error'));
         } finally {
             setUploadingFile(false);
+            // Clear input so same file can be selected again if needed
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
+    const handleThumbnailChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingThumbnail(true);
+        try {
+            const url = await uploadToSupabase(file, 'thumbnails');
+            setFormData(prev => ({ ...prev, thumbnail_path: url }));
+        } catch (err) {
+            console.error('Error uploading thumbnail:', err);
+            alert('Error uploading thumbnail: ' + (err.message || 'Unknown error'));
+        } finally {
+            setUploadingThumbnail(false);
+            if (thumbInputRef.current) thumbInputRef.current.value = '';
         }
     };
 
@@ -157,12 +163,14 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                 {formData.type === 'video' && (
                     <div className="flex gap-4 mb-4">
                         <button
+                            type="button"
                             onClick={() => setVideoMode('link')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${videoMode === 'link' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
                         >
                             YouTube Link
                         </button>
                         <button
+                            type="button"
                             onClick={() => setVideoMode('upload')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${videoMode === 'upload' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
                         >
@@ -192,23 +200,28 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                         <div className="flex items-center gap-4">
                             <div className="flex-1 relative">
                                 <input
-                                    className="w-full border border-gray-200 p-3 text-sm font-mono bg-white pr-20 truncate"
+                                    className="w-full border border-gray-200 p-3 text-sm font-mono bg-white pr-24 truncate"
                                     value={formData.file_path}
                                     readOnly
                                     placeholder="파일을 선택하여 업로드하세요"
                                 />
                                 <div className="absolute right-2 top-1.5">
-                                    <label className="bg-black text-white px-4 py-1.5 text-[10px] font-bold uppercase cursor-pointer hover:bg-gray-800 transition-colors flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={uploadingFile}
+                                        className="bg-black text-white px-4 py-1.5 text-[10px] font-bold uppercase hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:bg-gray-400"
+                                    >
                                         {uploadingFile ? <Loader2 className="animate-spin" size={12} /> : <Upload size={12} />}
                                         Browse
-                                        <input
-                                            type="file"
-                                            className="hidden"
-                                            onChange={handleMainFileChange}
-                                            disabled={uploadingFile}
-                                            accept={formData.type === 'pdf' ? '.pdf' : (formData.type === 'video' ? 'video/*' : '*/*')}
-                                        />
-                                    </label>
+                                    </button>
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleMainFileChange}
+                                        accept={formData.type === 'pdf' ? '.pdf' : (formData.type === 'video' ? 'video/*' : '*/*')}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -221,7 +234,10 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
             <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Thumbnail Image (Required for all types)</label>
                 <div className="flex items-center gap-4">
-                    <div className="relative w-40 h-24 bg-gray-100 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:border-black transition-colors group">
+                    <div
+                        className="relative w-40 h-24 bg-gray-100 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:border-black transition-colors group"
+                        onClick={() => thumbInputRef.current?.click()}
+                    >
                         {uploadingThumbnail ? (
                             <Loader2 className="animate-spin text-gray-400" size={20} />
                         ) : formData.thumbnail_path ? (
@@ -233,11 +249,11 @@ const AssetForm = ({ onSave, onCancel, title, initialData = {} }) => {
                             </div>
                         )}
                         <input
+                            ref={thumbInputRef}
                             type="file"
                             accept="image/*"
-                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            className="hidden"
                             onChange={handleThumbnailChange}
-                            disabled={uploadingThumbnail}
                         />
                     </div>
                     <div className="flex-1 text-[10px] text-gray-400 leading-relaxed">
